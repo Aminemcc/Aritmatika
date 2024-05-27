@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "108092257801",
+    "project_id": "aritmatika-6bb60",
+    "storage_bucket": "aritmatika-6bb60.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108092257801:android:72ee69fe0e0898a37d2ad8",
+        "android_client_info": {
+          "package_name": "com.example.profile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJyeNdrNgnVOueuU-GnTew5APq-p5nVGw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
