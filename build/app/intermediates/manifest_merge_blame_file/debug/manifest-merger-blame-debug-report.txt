@@ -1,0 +1,225 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.duaEmpat.dua_empat"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="19"
+9        android:targetSdkVersion="33" />
+10    <!--
+11         The INTERNET permission is required for development. Specifically,
+12         the Flutter tool needs it to communicate with the running application
+13         to allow setting breakpoints, to provide hot reload, etc.
+14    -->
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\debug\AndroidManifest.xml:6:5-66
+15-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\debug\AndroidManifest.xml:6:22-64
+16    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+16-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:2:5-81
+16-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:2:22-78
+17    <!--
+18 Required to query activities that can process text, see:
+19         https://developer.android.com/training/package-visibility?hl=en and
+20         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+21
+22         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin.
+23    -->
+24    <queries>
+24-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:41:5-51:15
+25        <intent>
+25-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:42:9-45:18
+26            <action android:name="android.intent.action.PROCESS_TEXT" />
+26-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:43:13-72
+26-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:43:21-70
+27
+28            <data android:mimeType="text/plain" />
+28-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:44:13-50
+28-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:44:19-48
+29        </intent>
+30        <intent>
+30-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:46:9-50:18
+31            <action android:name="android.intent.action.VIEW" />
+31-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:47:13-64
+31-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:47:21-62
+32
+33            <category android:name="android.intent.category.BROWSABLE" />
+33-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:48:13-73
+33-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:48:23-71
+34
+35            <data android:scheme="https" />
+35-->C:\Users\This PC\StudioProjects\dua_empat\android\app\src\main\AndroidManifest.xml:44:13-50
+36        </intent>
+37    </queries>
+38
+39    <permission
+39-->[androidx.core:core:1.10.1] C:\Users\This PC\.gradle\caches\transforms-3\0b9c903fef8d2eb2a269c36999ef4a74\transformed\core-1.10.1\AndroidManifest.xml:22:5-24:47
+40        android:name="com.example.duaEmpat.dua_empat.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+40-->[androidx.core:core:1.10.1] C:\Users\This PC\.gradle\caches\transforms-3\0b9c903fef8d2eb2a269c36999ef4a74\transformed\core-1.10.1\AndroidManifest.xml:23:9-81
+41        android:protectionLevel="signature" />
+41-->[androidx.core:core:1.10.1] C:\Users\This PC\.gradle\caches\transforms-3\0b9c903fef8d2eb2a269c36999ef4a74\transformed\core-1.10.1\AndroidManifest.xml:24:9-44
+42
+43    <uses-permission android:name="com.example.duaEmpat.dua_empat.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+43-->[androidx.core:core:1.10.1] C:\Users\This PC\.gradle\caches\transforms-3\0b9c903fef8d2eb2a269c36999ef4a74\transformed\core-1.10.1\AndroidManifest.xml:26:5-97
+43-->[androidx.core:core:1.10.1] C:\Users\This PC\.gradle\caches\transforms-3\0b9c903fef8d2eb2a269c36999ef4a74\transformed\core-1.10.1\AndroidManifest.xml:26:22-94
+44
+45    <application
+46        android:name="android.app.Application"
+47        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+47-->[androidx.core:core:1.10.1] C:\Users\This PC\.gradle\caches\transforms-3\0b9c903fef8d2eb2a269c36999ef4a74\transformed\core-1.10.1\AndroidManifest.xml:28:18-86
+48        android:debuggable="true"
+49        android:enableOnBackInvokedCallback="true"
+50        android:icon="@mipmap/ic_launcher"
+51        android:label="dua_empat" >
+52        <activity
+53            android:name="com.example.duaEmpat.dua_empat.MainActivity"
+54            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+55            android:exported="true"
+56            android:hardwareAccelerated="true"
+57            android:launchMode="singleTop"
+58            android:requestLegacyExternalStorage="true"
+59            android:theme="@style/LaunchTheme"
+60            android:windowSoftInputMode="adjustResize" >
+61
+62            <!--
+63                 Specifies an Android theme to apply to this Activity as soon as
+64                 the Android process has started. This theme is visible to the user
+65                 while the Flutter UI initializes. After that, this theme continues
+66                 to determine the Window background behind the Flutter UI.
+67            -->
+68            <meta-data
+69                android:name="io.flutter.embedding.android.NormalTheme"
+70                android:resource="@style/NormalTheme" />
+71
+72            <intent-filter>
+73                <action android:name="android.intent.action.MAIN" />
+74
+75                <category android:name="android.intent.category.LAUNCHER" />
+76            </intent-filter>
+77        </activity>
+78        <!--
+79             Don't delete the meta-data below.
+80             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
+81        -->
+82        <meta-data
+83            android:name="flutterEmbedding"
+84            android:value="2" />
+85
+86        <provider
+86-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:11:9-19:20
+87            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+87-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-82
+88            android:authorities="com.example.duaEmpat.dua_empat.flutter.image_provider"
+88-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-74
+89            android:exported="false"
+89-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:14:13-37
+90            android:grantUriPermissions="true" >
+90-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:15:13-47
+91            <meta-data
+91-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:16:13-18:75
+92                android:name="android.support.FILE_PROVIDER_PATHS"
+92-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:17:17-67
+93                android:resource="@xml/flutter_image_picker_file_paths" />
+93-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:18:17-72
+94        </provider> <!-- Trigger Google Play services to install the backported photo picker module. -->
+95        <service
+95-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:21:9-33:19
+96            android:name="com.google.android.gms.metadata.ModuleDependencies"
+96-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:22:13-78
+97            android:enabled="false"
+97-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:23:13-36
+98            android:exported="false" >
+98-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:24:13-37
+99            <intent-filter>
+99-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:26:13-28:29
+100                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+100-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:27:17-94
+100-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:27:25-91
+101            </intent-filter>
+102
+103            <meta-data
+103-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:30:13-32:36
+104                android:name="photopicker_activity:0:required"
+104-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:31:17-63
+105                android:value="" />
+105-->[:image_picker_android] C:\Users\This PC\StudioProjects\dua_empat\build\image_picker_android\intermediates\merged_manifest\debug\AndroidManifest.xml:32:17-33
+106        </service>
+107
+108        <activity
+108-->[:url_launcher_android] C:\Users\This PC\StudioProjects\dua_empat\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:10:9-13:74
+109            android:name="io.flutter.plugins.urllauncher.WebViewActivity"
+109-->[:url_launcher_android] C:\Users\This PC\StudioProjects\dua_empat\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:11:13-74
+110            android:exported="false"
+110-->[:url_launcher_android] C:\Users\This PC\StudioProjects\dua_empat\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:12:13-37
+111            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+111-->[:url_launcher_android] C:\Users\This PC\StudioProjects\dua_empat\build\url_launcher_android\intermediates\merged_manifest\debug\AndroidManifest.xml:13:13-71
+112
+113        <uses-library
+113-->[androidx.window:window:1.0.0-beta04] C:\Users\This PC\.gradle\caches\transforms-3\032f4dff274e516110d9363a9793a3e3\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:25:9-27:40
+114            android:name="androidx.window.extensions"
+114-->[androidx.window:window:1.0.0-beta04] C:\Users\This PC\.gradle\caches\transforms-3\032f4dff274e516110d9363a9793a3e3\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:26:13-54
+115            android:required="false" />
+115-->[androidx.window:window:1.0.0-beta04] C:\Users\This PC\.gradle\caches\transforms-3\032f4dff274e516110d9363a9793a3e3\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:27:13-37
+116        <uses-library
+116-->[androidx.window:window:1.0.0-beta04] C:\Users\This PC\.gradle\caches\transforms-3\032f4dff274e516110d9363a9793a3e3\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:28:9-30:40
+117            android:name="androidx.window.sidecar"
+117-->[androidx.window:window:1.0.0-beta04] C:\Users\This PC\.gradle\caches\transforms-3\032f4dff274e516110d9363a9793a3e3\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:29:13-51
+118            android:required="false" />
+118-->[androidx.window:window:1.0.0-beta04] C:\Users\This PC\.gradle\caches\transforms-3\032f4dff274e516110d9363a9793a3e3\transformed\jetified-window-1.0.0-beta04\AndroidManifest.xml:30:13-37
+119
+120        <provider
+120-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:24:9-32:20
+121            android:name="androidx.startup.InitializationProvider"
+121-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:25:13-67
+122            android:authorities="com.example.duaEmpat.dua_empat.androidx-startup"
+122-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:26:13-68
+123            android:exported="false" >
+123-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:27:13-37
+124            <meta-data
+124-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:29:13-31:52
+125                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+125-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:30:17-85
+126                android:value="androidx.startup" />
+126-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:31:17-49
+127        </provider>
+128
+129        <receiver
+129-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:34:9-52:20
+130            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+130-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:35:13-76
+131            android:directBootAware="false"
+131-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:36:13-44
+132            android:enabled="true"
+132-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:37:13-35
+133            android:exported="true"
+133-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:38:13-36
+134            android:permission="android.permission.DUMP" >
+134-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:39:13-57
+135            <intent-filter>
+135-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:40:13-42:29
+136                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+136-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:41:17-91
+136-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:41:25-88
+137            </intent-filter>
+138            <intent-filter>
+138-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:43:13-45:29
+139                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+139-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:44:17-85
+139-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:44:25-82
+140            </intent-filter>
+141            <intent-filter>
+141-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:46:13-48:29
+142                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+142-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:47:17-88
+142-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:47:25-85
+143            </intent-filter>
+144            <intent-filter>
+144-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:49:13-51:29
+145                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+145-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:50:17-95
+145-->[androidx.profileinstaller:profileinstaller:1.3.0] C:\Users\This PC\.gradle\caches\transforms-3\a0ecce03964d1d4dc26ffab32b08b16e\transformed\jetified-profileinstaller-1.3.0\AndroidManifest.xml:50:25-92
+146            </intent-filter>
+147        </receiver>
+148    </application>
+149
+150</manifest>

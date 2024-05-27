@@ -1,0 +1,1 @@
+ C:\\Users\\This\ PC\\StudioProjects\\dua_empat\\.dart_tool\\flutter_build\\b316f52f5c6345a5e1757aac7652b502\\native_assets.yaml: 
