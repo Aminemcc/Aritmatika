@@ -1,8 +1,8 @@
 import 'dart:ffi';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:dua_empat/Generator.dart';
-import 'package:dua_empat/SolverUtility.dart';
+import 'package:aritmatika/Generator.dart';
+import 'package:aritmatika/SolverUtility.dart';
 
 class RandomPage extends StatefulWidget {
   final String mode = "Random";

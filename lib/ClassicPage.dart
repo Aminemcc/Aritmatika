@@ -1,8 +1,8 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:dua_empat/Generator.dart';
-import 'package:dua_empat/SolverUtility.dart';
+import 'package:aritmatika/Generator.dart';
+import 'package:aritmatika/SolverUtility.dart';
 
 class ClassicPage extends StatefulWidget {
   final String mode;
@@ -150,6 +150,17 @@ class _ClassicPageState extends State<ClassicPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.mode}'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () {
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => HomePage()),
+              // );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Padding(

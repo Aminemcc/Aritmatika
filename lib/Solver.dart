@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:dua_empat/SolverUtility.dart';
+import 'package:aritmatika/SolverUtility.dart';
 
 class Solver {
   // Constant / Original
