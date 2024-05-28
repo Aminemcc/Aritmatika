@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'HelpPage.dart';
 import 'ClassicSettingPage.dart';
 import 'BitwiseSettingPage.dart';
@@ -13,6 +14,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _time = '';
   bool _loading = true;
+
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
@@ -56,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Text(
-                    'Welcome Muhammad Amin',
+                    'Welcome ' + user.email!,
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
@@ -124,6 +127,20 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Text(
                     'Solver',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                  child: Text(
+                    'Logout',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,

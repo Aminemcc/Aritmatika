@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:profile/components/my_button.dart';
-import 'package:profile/components/my_textfield.dart';
-import 'package:profile/components/square_tile.dart';
+import 'package:aritmatika/components/my_button.dart';
+import 'package:aritmatika/components/my_textfield.dart';
+import 'package:aritmatika/components/square_tile.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;

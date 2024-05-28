@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'aritmatika-6bb60.appspot.com',
     iosBundleId: 'com.example.profile',
   );
+
 }
