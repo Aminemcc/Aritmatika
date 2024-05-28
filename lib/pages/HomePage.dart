@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'HelpPage.dart';
-import 'ClassicSettingPage.dart';
-import 'BitwiseSettingPage.dart';
-import 'RandomSettingPage.dart';
-import 'SolverPage.dart';
+import 'package:aritmatika/pages/HelpPage.dart';
+import 'package:aritmatika/pages/ClassicSettingPage.dart';
+import 'package:aritmatika/pages/BitwiseSettingPage.dart';
+import 'package:aritmatika/pages/RandomSettingPage.dart';
+import 'package:aritmatika/pages/SolverPage.dart';
 
 class HomePage extends StatefulWidget {
   @override

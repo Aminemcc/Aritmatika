@@ -1,8 +1,6 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:aritmatika/Generator.dart';
-import 'package:aritmatika/SolverUtility.dart';
+import 'package:aritmatika/utils/Generator.dart';
+import 'package:aritmatika/utils/SolverUtility.dart';
 
 class ClassicPage extends StatefulWidget {
   final String mode;

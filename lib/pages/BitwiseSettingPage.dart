@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ClassicPage.dart';
+import 'package:aritmatika/pages/ClassicPage.dart';
 
 class BitwiseSettingPage extends StatefulWidget {
   @override

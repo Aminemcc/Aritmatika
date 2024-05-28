@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'RandomPage.dart';
+import 'package:aritmatika/pages/RandomPage.dart';
 
 class RandomSettingPage extends StatefulWidget {
   @override

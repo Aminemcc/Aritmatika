@@ -1,7 +1,7 @@
 import 'dart:math';
-import 'Solver.dart';
-import 'SolverInt.dart';
-import 'SolverUtility.dart';
+import 'package:aritmatika/utils/Solver.dart';
+import 'package:aritmatika/utils/SolverInt.dart';
+import 'package:aritmatika/utils/SolverUtility.dart';
 
 class Generator {
 

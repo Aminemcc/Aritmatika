@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:aritmatika/pages/login_page.dart';
 
 import 'login_or_register_page.dart';
-import 'package:aritmatika/HomePage.dart';
+import 'package:aritmatika/pages/HomePage.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});

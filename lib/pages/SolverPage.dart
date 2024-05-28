@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'Solver.dart';
-import 'SolverInt.dart';
+import 'package:aritmatika/utils/Solver.dart';
+import 'package:aritmatika/utils/SolverInt.dart';
 
 class SolverPage extends StatefulWidget {
   @override
