@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aritmatika/services/UserService.dart';
 
 class HistoryService {
+  final maxEntry = 1000;
   final userService = UserService();
   late final User user;
   late final CollectionReference stageHistory;

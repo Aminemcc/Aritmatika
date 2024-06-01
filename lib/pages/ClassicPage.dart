@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:aritmatika/utils/Generator.dart';
 import 'package:aritmatika/utils/SolverUtility.dart';
 import 'package:aritmatika/services/HistoryService.dart';
+import 'package:aritmatika/pages/historyPage.dart';
 
 class ClassicPage extends StatefulWidget {
   final String mode;
@@ -180,11 +181,10 @@ class _ClassicPageState extends State<ClassicPage> {
           IconButton(
             icon: Icon(Icons.history),
             onPressed: () {
-              print("TEST");
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => HomePage()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryPage(mode: "classic")),
+              );
             },
           ),
         ],
