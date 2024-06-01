@@ -3,6 +3,11 @@ import 'package:aritmatika/utils/Solver.dart';
 import 'package:aritmatika/utils/SolverInt.dart';
 
 class SolverPage extends StatefulWidget {
+  final double? target;
+  final List<int>? numbers;
+  final List<String>? operators;
+  SolverPage({this.target, this.numbers, this.operators});
+
   @override
   _SolverPageState createState() => _SolverPageState();
 }
@@ -21,7 +26,7 @@ class _SolverPageState extends State<SolverPage> {
   List<String> _solutions = [];
   int countSelectedOperators = 4;
   bool integerOnlyMode = false;
-  List<bool> isSelected = [true, true, true, true, false, false, false, false, false, false, false, false];
+  List<bool> isSelected = [];
   List<String> operators = ['+', '-', '*', '/', '**', '//', '%', '<<', '>>', '&', '|', '^'];
   List<String> operatorSymbols1 = ['+', '-', '*', '/', '**', '//'];
   List<String> operatorSymbols2 = ['%', '<<', '>>', '&', '|', '^'];
@@ -29,13 +34,26 @@ class _SolverPageState extends State<SolverPage> {
   @override
   void initState() {
     super.initState();
-    _targetNumberController.text = '24';
-    _numberControllers.add(TextEditingController());
-    _numberControllers.add(TextEditingController());
-    _numberControllers.add(TextEditingController());
-    _numberControllers.add(TextEditingController());
+    _targetNumberController.text = (widget.target ?? 24).toInt().toString();
+    _numberControllers = (widget.numbers ?? [-1, -1, -1, -1])
+        .map((number) => TextEditingController(text: number == -1 ? "": number.toString()))
+        .toList();
+    isSelected = List.generate(operators.length ?? 4, (index) {
+      if (widget.operators != null && widget.operators!.contains(operators[index])) {
+        return true;
+      } else if (widget.operators == null){
+        return index < 4; // Default value for the first 4 operators
+      } else{
+        return false;
+      }
+    });
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (widget.target != null && widget.numbers != null && widget.operators != null) {
+        _solve();
+      }
+    });
   }
-
+  
   @override
   void dispose() {
     _targetNumberController.dispose();
