@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:aritmatika/pages/login_page.dart';
-import 'package:aritmatika/pages/register_page.dart';
+import 'package:aritmatika/pages/LoginPage.dart';
+import 'package:aritmatika/pages/RegisterPage.dart';
 
 class LoginOrRegisterPage extends StatefulWidget {
   const LoginOrRegisterPage({super.key});

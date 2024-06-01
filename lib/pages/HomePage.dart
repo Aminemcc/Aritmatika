@@ -5,6 +5,7 @@ import 'package:aritmatika/pages/ClassicSettingPage.dart';
 import 'package:aritmatika/pages/BitwiseSettingPage.dart';
 import 'package:aritmatika/pages/RandomSettingPage.dart';
 import 'package:aritmatika/pages/SolverPage.dart';
+import 'package:aritmatika/pages/AuthPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,6 +21,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> signout() async {
+    User? a = FirebaseAuth.instance.currentUser!;
+    if(a == null) {
+      print("User null");
+    } else{
+      print(a.uid);
+    }
+    await FirebaseAuth.instance.signOut();
+    print("yey");
   }
 
   @override
@@ -137,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(height: 20.0),
                 ElevatedButton(
                   onPressed: () {
-                    FirebaseAuth.instance.signOut();
+                    signout();
                   },
                   child: Text(
                     'Logout',
