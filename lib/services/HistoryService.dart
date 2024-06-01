@@ -49,13 +49,23 @@ class HistoryService {
     }
   }
 
-  Future<void> addHistoryEntry(String mode, Map<String, dynamic> data) {
+  Future<String> addHistoryEntry(String mode, Map<String, dynamic> data) async {
     CollectionReference collection = _getCollectionByMode(mode);
-    return collection.add({
+    DocumentReference docRef = await collection.add({
+      ...data,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+    return docRef.id; // Return the document ID
+  }
+
+  Future<void> updateHistoryEntry(String mode, String documentId, Map<String, dynamic> data) {
+    CollectionReference collection = _getCollectionByMode(mode);
+    return collection.doc(documentId).update({
       ...data,
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
+
 
   Stream<QuerySnapshot> getHistoryStream(String mode) {
     CollectionReference collection = _getCollectionByMode(mode);

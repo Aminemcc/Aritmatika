@@ -30,6 +30,11 @@ class _ClassicPageState extends State<ClassicPage> {
   List<int> selectedIndexes = [];
   bool updatedSelection = false;
 
+  Map<String, dynamic> historyData = {};
+  String historyId = '';
+  bool isSolved = false;
+  bool sawSolution = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,17 +43,19 @@ class _ClassicPageState extends State<ClassicPage> {
 
   Future<void> _initState() async {
     fetchGameData();
-    Map<String, dynamic> data = {
-      "numbers": numbers,
+    historyData = {
+      "numbers": startNumbers,
       "target": target,
       "operators": widget.operators,
-      "isSolved": false
+      "isSolved": isSolved
     };
-    await historyService.addHistoryEntry("classic", data);
+    historyId = await historyService.addHistoryEntry("classic", historyData);
     setState(() {});
   }
 
   fetchGameData() {
+    isSolved = false;
+    sawSolution = false;
     numbers.clear();
     undoNumbers.clear();
     selectedIndexes.clear();
@@ -100,6 +107,10 @@ class _ClassicPageState extends State<ClassicPage> {
     });
   }
 
+  Future<void> updateSolvedStatus() async {
+    await historyService.updateHistoryEntry("classic", historyId, historyData);
+  }
+
   void applyOperator(String operator) {
     try {
       if (selectedIndexes.length < 2 || !widget.operators.contains(operator)) {
@@ -123,7 +134,11 @@ class _ClassicPageState extends State<ClassicPage> {
       isSelected.add(false);
       undoNumbers.add(List.from(numbers)); // Save the state after applying the operator
       currentOperator = ''; // Deselect the operator
-
+      if(result == target && numbers.length == 1 && sawSolution == false){
+        isSolved = true;
+        historyData["isSolved"] = true;
+        updateSolvedStatus();
+      }
       setState(() {}); // Update the UI after all state changes
     } catch (e) {
       return;
@@ -132,6 +147,7 @@ class _ClassicPageState extends State<ClassicPage> {
 
   void showSolution() {
     String solution = gameData['solution'];
+    sawSolution = true;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -262,7 +278,7 @@ class _ClassicPageState extends State<ClassicPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: fetchGameData,
+                onPressed: _initState,
                 child: Text('New'),
               ),
               SizedBox(height: 20),
