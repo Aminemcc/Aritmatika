@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:aritmatika/components/my_button.dart';
 import 'package:aritmatika/components/my_textfield.dart';
 import 'package:aritmatika/components/square_tile.dart';
+import 'package:aritmatika/services/UserService.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -52,6 +53,8 @@ class _RegisterPageState extends State<RegisterPage> {
             email: emailController.text,
             password: passwordController.text,
         );
+        final userService = UserService();
+        await userService.addUser();
       } else {
         // show error message, passwords don't match
         showErrorMessage('Password don\'t match!');
@@ -183,12 +186,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // google button
-                    SquareTile(imagePath: 'lib/images/google.png'),
+                    SquareTile(imagePath: 'assets/images/google.png'),
 
                     const SizedBox(width: 10),
 
                     // apple button
-                    SquareTile(imagePath: 'lib/images/apple.png'),
+                    SquareTile(imagePath: 'assets/images/apple.png'),
                   ],
                 ),
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aritmatika/utils/Generator.dart';
 import 'package:aritmatika/utils/SolverUtility.dart';
+import 'package:aritmatika/services/HistoryService.dart';
 
 class ClassicPage extends StatefulWidget {
   final String mode;
@@ -17,6 +18,7 @@ class ClassicPage extends StatefulWidget {
 class _ClassicPageState extends State<ClassicPage> {
   final Generator generator = Generator();
   final SolverUtility util = SolverUtility();
+  final historyService = HistoryService();
 
   Map<String, dynamic> gameData = {};
   List<List<double>> undoNumbers = [];
@@ -31,21 +33,31 @@ class _ClassicPageState extends State<ClassicPage> {
   @override
   void initState() {
     super.initState();
-    fetchGameData();
+    _initState();
   }
 
-  void fetchGameData() {
-    setState(() {
-      numbers.clear();
-      undoNumbers.clear();
-      selectedIndexes.clear();
-      gameData = generator.generate(widget.n, 1, 13, widget.targetMin, widget.targetMax, widget.operators, false);
-      startNumbers = gameData['numbers'];
-      target = gameData['target'].toDouble();
-      numbers.addAll(startNumbers.map<double>((e) => e.toDouble()).toList());
-      isSelected = List.generate(numbers.length, (index) => false);
-      undoNumbers.add(List.from(numbers)); // Save initial numbers state
-    });
+  Future<void> _initState() async {
+    fetchGameData();
+    Map<String, dynamic> data = {
+      "numbers": numbers,
+      "target": target,
+      "operators": widget.operators,
+      "isSolved": false
+    };
+    await historyService.addHistoryEntry("classic", data);
+    setState(() {});
+  }
+
+  fetchGameData() {
+    numbers.clear();
+    undoNumbers.clear();
+    selectedIndexes.clear();
+    gameData = generator.generate(widget.n, 1, 13, widget.targetMin, widget.targetMax, widget.operators, false);
+    startNumbers = gameData['numbers'];
+    target = gameData['target'].toDouble();
+    numbers.addAll(startNumbers.map<double>((e) => e.toDouble()).toList());
+    isSelected = List.generate(numbers.length, (index) => false);
+    undoNumbers.add(List.from(numbers));
   }
 
   void reset() {
