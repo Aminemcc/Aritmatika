@@ -152,6 +152,7 @@ class _ClassicPageState extends State<ClassicPage> {
           IconButton(
             icon: Icon(Icons.history),
             onPressed: () {
+              print("TEST");
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(builder: (context) => HomePage()),

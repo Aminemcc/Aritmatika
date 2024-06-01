@@ -1,16 +1,10 @@
-# profile
+# Team Member
+- Muhammad Amin
+- Cindi
+- Ibra
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Aritmatika
+Sebuah pengembangan dari game kartu 24. Game kartu 24 dimulai dengan mengambil 4 kartu dengan As 
+bernilai 1 hingga King bernilai 13. Dengan menggunakan operasi tambah, kurang, kali, dan bagi, bentuklah 24.<br>
+Pada game android aritmatika, target angka tidak hanya 24, kartu atau angka tidak hanya 4 dan operasi yang dapat
+dilakukan bervariasi
