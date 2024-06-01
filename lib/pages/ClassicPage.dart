@@ -50,7 +50,7 @@ class _ClassicPageState extends State<ClassicPage> {
       "operators": widget.operators,
       "isSolved": isSolved
     };
-    historyId = await historyService.addHistoryEntry("classic", historyData);
+    historyId = await historyService.addHistoryEntry(widget.mode, historyData);
     setState(() {});
   }
 
@@ -109,7 +109,7 @@ class _ClassicPageState extends State<ClassicPage> {
   }
 
   Future<void> updateSolvedStatus() async {
-    await historyService.updateHistoryEntry("classic", historyId, historyData);
+    await historyService.updateHistoryEntry(widget.mode, historyId, historyData);
   }
 
   void applyOperator(String operator) {
@@ -183,7 +183,7 @@ class _ClassicPageState extends State<ClassicPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HistoryPage(mode: "classic")),
+                MaterialPageRoute(builder: (context) => HistoryPage(mode: widget.mode)),
               );
             },
           ),

@@ -53,7 +53,7 @@ class _SolverPageState extends State<SolverPage> {
       }
     });
   }
-  
+
   @override
   void dispose() {
     _targetNumberController.dispose();

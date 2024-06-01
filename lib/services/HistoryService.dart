@@ -7,7 +7,7 @@ class HistoryService {
   final userService = UserService();
   late final User user;
   late final CollectionReference stageHistory;
-  late final CollectionReference classicHistory, binaryHistory, randomHistory, solverHistory;
+  late final CollectionReference classicHistory, bitwiseHistory, randomHistory, solverHistory;
 
   HistoryService() {
     user = FirebaseAuth.instance.currentUser!;
@@ -21,10 +21,10 @@ class HistoryService {
         .collection('users')
         .doc(user.uid)
         .collection('classicHistory');
-    binaryHistory = FirebaseFirestore.instance
+    bitwiseHistory = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
-        .collection('binaryHistory');
+        .collection('bitwiseHistory');
     randomHistory = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
@@ -36,11 +36,11 @@ class HistoryService {
   }
 
   CollectionReference _getCollectionByMode(String mode) {
-    switch (mode) {
+    switch (mode.toLowerCase()) {
       case 'classic':
         return classicHistory;
-      case 'binary':
-        return binaryHistory;
+      case 'bitwise':
+        return bitwiseHistory;
       case 'random':
         return randomHistory;
       case 'solver':
@@ -65,6 +65,28 @@ class HistoryService {
       ...data,
       'timestamp': FieldValue.serverTimestamp(),
     });
+  }
+
+  Future<void> deleteHistoryEntry(String mode, String docId) async {
+    CollectionReference collection = _getCollectionByMode(mode);
+    await collection.doc(docId).delete();
+  }
+
+  Future<void> deleteAllHistoryEntries(String mode) async {
+    CollectionReference collection = _getCollectionByMode(mode);
+
+    // Get all documents in the collection
+    QuerySnapshot snapshot = await collection.get();
+
+    // Create a batch to delete all documents
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    for (DocumentSnapshot doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    // Commit the batch
+    await batch.commit();
   }
 
 

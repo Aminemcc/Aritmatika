@@ -21,6 +21,36 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('History (${widget.mode})'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed:() {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Delete All History?"),
+                  content: Text("Apakah Anda yakin ingin menghapus seluruh history?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("Cancel")
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        historyService.deleteAllHistoryEntries(widget.mode);
+                        Navigator.pop(context);
+                      },
+                      child: Text("Delete"),
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                      ),
+                    )
+                  ]
+                )
+              );
+            }
+          )
+        ]
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: historyService.getHistoryStream(widget.mode),
@@ -112,6 +142,10 @@ class _HistoryPageState extends State<HistoryPage> {
                           Text(
                             'Timestamp: $formattedDate',
                             style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () => historyService.deleteHistoryEntry(widget.mode, doc.id),
                           ),
                         ],
                       ),

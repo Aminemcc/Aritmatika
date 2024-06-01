@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:aritmatika/utils/Generator.dart';
 import 'package:aritmatika/utils/SolverUtility.dart';
+import 'package:aritmatika/services/HistoryService.dart';
+import 'package:aritmatika/pages/historyPage.dart';
 
 class RandomPage extends StatefulWidget {
   final String mode = "Random";
@@ -21,6 +23,8 @@ class _RandomPageState extends State<RandomPage> {
   final Generator generator = Generator();
   final SolverUtility util = SolverUtility();
   final Random random = Random();
+  final historyService = HistoryService();
+
   List<String> operators = [];
   Map<String, dynamic> gameData = {};
   List<List<double>> undoNumbers = [];
@@ -32,10 +36,27 @@ class _RandomPageState extends State<RandomPage> {
   List<int> selectedIndexes = [];
   bool updatedSelection = false;
 
+  Map<String, dynamic> historyData = {};
+  String historyId = '';
+  bool isSolved = false;
+  bool sawSolution = false;
+
   @override
   void initState() {
     super.initState();
+    _initState();
+  }
+
+  Future<void> _initState() async {
     fetchGameData();
+    historyData = {
+      "numbers": startNumbers,
+      "target": target,
+      "operators": operators,
+      "isSolved": isSolved
+    };
+    historyId = await historyService.addHistoryEntry(widget.mode, historyData);
+    setState(() {});
   }
 
   void fetchGameData() {
@@ -50,8 +71,7 @@ class _RandomPageState extends State<RandomPage> {
     target = gameData['target'].toDouble();
     numbers.addAll(startNumbers.map<double>((e) => e.toDouble()).toList());
     isSelected = List.generate(numbers.length, (index) => false);
-    undoNumbers.add(List.from(numbers)); // Save initial numbers state
-    setState(() {});
+    undoNumbers.add(List.from(numbers));
   }
 
   void reset() {
@@ -94,6 +114,10 @@ class _RandomPageState extends State<RandomPage> {
     });
   }
 
+  Future<void> updateSolvedStatus() async {
+    await historyService.updateHistoryEntry(widget.mode, historyId, historyData);
+  }
+
   void applyOperator(String operator) {
     try {
       if (selectedIndexes.length < 2 || !operators.contains(operator)) {
@@ -118,6 +142,12 @@ class _RandomPageState extends State<RandomPage> {
       undoNumbers.add(List.from(numbers)); // Save the state after applying the operator
       currentOperator = ''; // Deselect the operator
 
+      if(result == target && numbers.length == 1 && sawSolution == false){
+        isSolved = true;
+        historyData["isSolved"] = true;
+        updateSolvedStatus();
+      }
+
       setState(() {}); // Update the UI after all state changes
     } catch (e) {
       return;
@@ -126,6 +156,7 @@ class _RandomPageState extends State<RandomPage> {
 
   void showSolution() {
     String solution = gameData['solution'];
+    sawSolution = true;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -154,6 +185,17 @@ class _RandomPageState extends State<RandomPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.mode}'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryPage(mode: widget.mode)),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Padding(
@@ -244,7 +286,7 @@ class _RandomPageState extends State<RandomPage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: fetchGameData,
+                onPressed: _initState,
                 child: Text('New'),
               ),
               SizedBox(height: 20),
