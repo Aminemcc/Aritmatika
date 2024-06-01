@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aritmatika/pages/RandomPage.dart';
+import 'package:aritmatika/pages/HistoryPage.dart';
 
 class RandomSettingPage extends StatefulWidget {
   @override
@@ -65,6 +66,17 @@ class _RandomSettingPageState extends State<RandomSettingPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Random Game Settings'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryPage(mode: "Random")),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

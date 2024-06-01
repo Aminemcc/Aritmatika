@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aritmatika/pages/ClassicPage.dart';
+import 'package:aritmatika/pages/HistoryPage.dart';
 
 class ClassicSettingPage extends StatefulWidget {
   @override
@@ -53,6 +54,17 @@ class _ClassicSettingPageState extends State<ClassicSettingPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Classic Game Settings'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryPage(mode: "Classic")),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
