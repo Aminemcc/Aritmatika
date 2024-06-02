@@ -1,1 +1,3 @@
-# Aritmatika
+# app
+
+A new Flutter project.
