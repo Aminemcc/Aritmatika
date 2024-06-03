@@ -3,6 +3,7 @@ import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:aritmatika/utils/Generator.dart';
 import 'package:aritmatika/utils/SolverUtility.dart';
 import 'package:aritmatika/services/HistoryService.dart';
+import 'package:aritmatika/services/UserService.dart';
 import 'package:aritmatika/pages/historyPage.dart';
 
 enum TimerState { start, play, end }
@@ -25,6 +26,10 @@ class _TimedHomePageState extends State<TimedHomePage> {
   final Generator generator = Generator();
   final SolverUtility util = SolverUtility();
   final historyService = HistoryService();
+  final userService = UserService();
+
+  int ?bestTimeTaken = 0;
+  String bestDisplayTime = "";
 
   Map<String, dynamic> gameData = {};
   List<List<double>> undoNumbers = [];
@@ -57,6 +62,13 @@ class _TimedHomePageState extends State<TimedHomePage> {
   }
 
   Future<void> _initState() async {
+    bestTimeTaken = await userService.getBestTimeTaken();
+    if(bestTimeTaken != null && bestTimeTaken != -1){
+      bestDisplayTime = StopWatchTimer.getDisplayTime(bestTimeTaken!, milliSecond: true);
+    } else{
+      bestTimeTaken = -1;
+      bestDisplayTime = "??:??:??:??";
+    }
     previous_time = 0;
     current_round = 1;
     _currentState = TimerState.start;
@@ -225,9 +237,6 @@ class _TimedHomePageState extends State<TimedHomePage> {
   Future<void> endGame() async {
     _currentState = TimerState.end;
     _stopWatchTimer.onStopTimer();
-    for(int i = 0; i < round; i++){
-      print(historyDatas[i]);
-    }
     int val = await _stopWatchTimer.rawTime.first;
     Map<String, dynamic> to_upload = {
       "datas" : historyDatas,
@@ -237,6 +246,15 @@ class _TimedHomePageState extends State<TimedHomePage> {
       "displayTime" : StopWatchTimer.getDisplayTime(val, milliSecond: true)
     };
     await historyService.addHistoryEntry("timer20-29", to_upload);
+    if(current_round == round + 1){
+      //check for best time
+      int ?bestTime = await userService.getBestTimeTaken();
+      if(bestTime == null || bestTime == -1){
+        await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
+      } else if(bestTime > to_upload["timeTaken"]){
+        await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
+      }
+    }
 
 
     //extra things
@@ -258,8 +276,20 @@ class _TimedHomePageState extends State<TimedHomePage> {
               initialData: 0,
               builder: (context, snapshot) {
                 final value = snapshot.data!;
-                final displayTime = StopWatchTimer.getDisplayTime(value, milliSecond: true);
-                return Text('$displayTime', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),);
+                String text_to_display = "", displayTime;
+                if(_currentState == TimerState.play) {
+                  displayTime = StopWatchTimer.getDisplayTime(
+                      value, milliSecond: true);
+                  text_to_display = displayTime;
+                } else if (_currentState == TimerState.start){
+                  displayTime = bestDisplayTime;
+                  text_to_display = "Best Time : $displayTime";
+                } else{
+                  displayTime = StopWatchTimer.getDisplayTime(
+                      value, milliSecond: true);
+                  text_to_display = "Time Taken : $displayTime";
+                }
+                return Text(text_to_display, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),);
               },
             ),
             _buildContent(),
@@ -405,15 +435,6 @@ class _TimedHomePageState extends State<TimedHomePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        StreamBuilder<int>(
-          stream: _stopWatchTimer.rawTime,
-          initialData: 0,
-          builder: (context, snapshot) {
-            final value = snapshot.data!;
-            final displayTime = StopWatchTimer.getDisplayTime(value, milliSecond: true);
-            return Text('Time taken: $displayTime');
-          },
-        ),
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {

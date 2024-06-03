@@ -11,8 +11,8 @@ class UserService{
       'email': user.email,
       'createdAt': FieldValue.serverTimestamp(),
       'bestStage' : 0,
-      'bestDisplayTime' : "00:00:00:00",
-      'bestTimeTaken' : 0
+      'bestDisplayTime' : "??:??:??:??",
+      'bestTimeTaken' : -1
     });
   }
 
@@ -36,6 +36,15 @@ class UserService{
     return users.doc(user.uid).update({
       'bestStage': bestStage,
     });
+  }
+
+  Future<int?> getBestTimeTaken() async {
+    try {
+      final userData = await users.doc(user.uid).get();
+      return userData['bestTimeTaken'] as int?;
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> updateBestTime(int bestTimeTaken, String bestDisplayTime) {
