@@ -5,7 +5,7 @@ import 'package:aritmatika/pages/ClassicSettingPage.dart';
 import 'package:aritmatika/pages/BitwiseSettingPage.dart';
 import 'package:aritmatika/pages/RandomSettingPage.dart';
 import 'package:aritmatika/pages/SolverPage.dart';
-import 'package:aritmatika/pages/AuthPage.dart';
+import 'package:aritmatika/pages/TimedHomePage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -76,6 +76,23 @@ class _HomePageState extends State<HomePage> {
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => TimedHomePage()),
+                    );
+                  },
+                  child: Text(
+                    'Timed',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
                     ),
                   ),
                 ),
