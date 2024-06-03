@@ -38,10 +38,12 @@ class _TimedHomePageState extends State<TimedHomePage> {
   bool updatedSelection = false;
 
   List<Map<String, dynamic>> gameDatas = [];
+  List<Map<String, dynamic>> historyDatas = [];
   Map<String, dynamic> historyData = {};
   String historyId = '';
   bool isSolved = false;
 
+  int previous_time = 0;
   TimerState _currentState = TimerState.start;
   int _clickCount = 0;
   final StopWatchTimer _stopWatchTimer = StopWatchTimer(
@@ -55,18 +57,15 @@ class _TimedHomePageState extends State<TimedHomePage> {
   }
 
   Future<void> _initState() async {
+    previous_time = 0;
     current_round = 1;
     _currentState = TimerState.start;
     gameDatas.clear();
+    historyDatas.clear();
     fetchGameData();
     newNumbers(1);
     _stopWatchTimer.onResetTimer();
-    historyData = {
-      "numbers": startNumbers,
-      "target": target,
-      "operators": operators,
-      "isSolved": isSolved
-    };
+
     // historyId = await historyService.addHistoryEntry(mode, historyData);
     setState(() {});
   }
@@ -80,11 +79,27 @@ class _TimedHomePageState extends State<TimedHomePage> {
       gameData = generator.generate(n, 1, 13, targetMin, targetMax, operators, false);
       gameDatas.add(gameData);
     }
-    startNumbers = gameData['numbers'];
-    target = gameData['target'].toDouble();
+  }
+
+  void newNumbers(int i){
+    // i = current round (start from 1)
+    numbers.clear();
+    undoNumbers.clear();
+    selectedIndexes.clear();
+    startNumbers = gameDatas[i-1]['numbers'];
+    target = gameDatas[i-1]['target'].toDouble();
     numbers.addAll(startNumbers.map<double>((e) => e.toDouble()).toList());
     isSelected = List.generate(numbers.length, (index) => false);
     undoNumbers.add(List.from(numbers));
+    historyData = {
+      "numbers": startNumbers,
+      "target": target,
+      "operators": operators,
+      "isSolved": isSolved,
+      "timeTaken" : -1,
+      "displayTime" : "null"
+    };
+    historyDatas.add(historyData);
   }
 
 
@@ -107,12 +122,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
 
   Future<void> _handleBackPressed() async {
     print('User pressed back');
-    _stopWatchTimer.rawTime.listen((value) {
-      final displayTime = StopWatchTimer.getDisplayTime(value, milliSecond: true);
-      print('Time: $displayTime');
-      print(value);
-
-    });
+    await endGame();
 
     _stopAndShowTime();
     if (context.mounted) {
@@ -144,17 +154,6 @@ class _TimedHomePageState extends State<TimedHomePage> {
     currentOperator = '';
     setState(() {});
   }
-  void newNumbers(int i){
-    // i = current round (start from 1)
-    numbers.clear();
-    undoNumbers.clear();
-    selectedIndexes.clear();
-    startNumbers = gameDatas[i-1]['numbers'];
-    target = gameDatas[i-1]['target'].toDouble();
-    numbers.addAll(startNumbers.map<double>((e) => e.toDouble()).toList());
-    isSelected = List.generate(numbers.length, (index) => false);
-    undoNumbers.add(List.from(numbers));
-}
 
   void handleNumber(int index) {
     setState(() {
@@ -173,7 +172,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
     });
   }
 
-  void applyOperator(String operator) {
+  Future<void> applyOperator(String operator) async {
     try {
       if (selectedIndexes.length < 2 || !operators.contains(operator)) {
         // Should return something error
@@ -197,9 +196,10 @@ class _TimedHomePageState extends State<TimedHomePage> {
       undoNumbers.add(List.from(numbers)); // Save the state after applying the operator
       currentOperator = ''; // Deselect the operator
       if(result == target && numbers.length == 1){
+        await updateHistoryDatas(current_round);
         ++current_round;
         if(current_round > round){
-          endGame();
+          await endGame();
         } else{
           newNumbers(current_round);
         }
@@ -213,9 +213,32 @@ class _TimedHomePageState extends State<TimedHomePage> {
     }
   }
 
-  void endGame(){
+
+  Future<void> updateHistoryDatas(int i) async {
+    int val = await _stopWatchTimer.rawTime.first;
+    historyDatas[i-1]["isSolved"] = true;
+    historyDatas[i-1]["timeTaken"] = val - previous_time;
+    previous_time = val;
+    historyDatas[i-1]["displayTime"] = StopWatchTimer.getDisplayTime(historyDatas[i-1]["timeTaken"], milliSecond: true);
+  }
+
+  Future<void> endGame() async {
     _currentState = TimerState.end;
     _stopWatchTimer.onStopTimer();
+    for(int i = 0; i < round; i++){
+      print(historyDatas[i]);
+    }
+    int val = await _stopWatchTimer.rawTime.first;
+    Map<String, dynamic> to_upload = {
+      "datas" : historyDatas,
+      "isCleared" : current_round == round + 1,
+      "clearedRound" : current_round - 1,
+      "timeTaken" : val,
+      "displayTime" : StopWatchTimer.getDisplayTime(val, milliSecond: true)
+    };
+    await historyService.addHistoryEntry("timer20-29", to_upload);
+
+
     //extra things
   }
 
@@ -357,8 +380,8 @@ class _TimedHomePageState extends State<TimedHomePage> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  applyOperator(currentOperator);
+                onPressed: () async {
+                  await applyOperator(currentOperator);
                 },
                 child: Text('Apply Operator'),
               ),

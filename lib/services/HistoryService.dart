@@ -6,7 +6,7 @@ class HistoryService {
   final maxEntry = 1000;
   final userService = UserService();
   late final User user;
-  late final CollectionReference stageHistory;
+  late final CollectionReference stageHistory, timer_20_29_History;
   late final CollectionReference classicHistory, bitwiseHistory, randomHistory, solverHistory;
 
   HistoryService() {
@@ -16,6 +16,11 @@ class HistoryService {
         .collection('users')
         .doc(user.uid)
         .collection('stageHistory');
+
+    timer_20_29_History = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('timer20-29History');
 
     classicHistory = FirebaseFirestore.instance
         .collection('users')
@@ -45,6 +50,8 @@ class HistoryService {
         return randomHistory;
       case 'solver':
         return solverHistory;
+      case 'timer20-29':
+        return timer_20_29_History;
       default:
         throw ArgumentError('Invalid mode: $mode');
     }
@@ -89,7 +96,6 @@ class HistoryService {
     await batch.commit();
   }
 
-
   Stream<QuerySnapshot> getHistoryStream(String mode) {
     CollectionReference collection = _getCollectionByMode(mode);
     return collection.orderBy('timestamp', descending: true).snapshots();
@@ -99,6 +105,7 @@ class HistoryService {
     CollectionReference collection = _getCollectionByMode(mode);
     return collection.orderBy('timestamp', descending: true).get();
   }
+
 
   //-----Stage Mode-----//
   Future<void> addStageEntry(int stage, Map<String, dynamic> data) async {

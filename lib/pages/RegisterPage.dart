@@ -4,6 +4,7 @@ import 'package:aritmatika/components/my_button.dart';
 import 'package:aritmatika/components/my_textfield.dart';
 import 'package:aritmatika/components/square_tile.dart';
 import 'package:aritmatika/services/UserService.dart';
+import 'package:aritmatika/utils/AuthErrors.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -15,6 +16,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   // text editing controllers
+  final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -34,6 +36,20 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  String? _validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Username is required';
+    } else if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
+      return 'Username can only contain alphabets, numbers, and underscores';
+    } else if (value.length < 3) {
+      return 'Username must be at least 3 characters long';
+    } else if (value.length > 15) {
+      return 'Username maximum length is 15 characters long';
+    }
+    return null;
+  }
+
+
   // sign user up method
   void signUserUp() async {
     // show loading circle
@@ -47,20 +63,41 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     try {
-      // check if password is confimed
-      if (passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailController.text,
-            password: passwordController.text,
-        );
-        final userService = UserService();
-        await userService.addUser();
-      } else {
-        // show error message, passwords don't match
-        showErrorMessage('Password don\'t match!');
+      // Check if password is confirmed
+      if (passwordController.text != confirmPasswordController.text) {
+        // Close loading circle
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // Show error message
+        showErrorMessage(AuthErrors.getErrorMessage('password-not-match'));
+        return;
       }
 
-      // Close loading circle on successful Register
+      // Check if username is available
+      bool isAvailable = await UserService.usernameAvailable(usernameController.text);
+      if (!isAvailable) {
+        // Close loading circle
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        // Show error message
+        showErrorMessage(AuthErrors.getErrorMessage('username-already-in-use'));
+        return;
+      }
+
+      // Create user with email and password
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      final userService = UserService();
+      // Add user details to Firestore
+      await userService.addUser(usernameController.text);
+
+      // Close loading circle on successful register
       if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
@@ -70,20 +107,13 @@ class _RegisterPageState extends State<RegisterPage> {
         Navigator.pop(context);
       }
 
-      String errorMessage;
-
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Wrong password provided.';
-      } else {
-        errorMessage = 'An error occurred. Please try again.';
-      }
+      String errorMessage = AuthErrors.getErrorMessage(e.code);
 
       // Show the error message to the user
       showErrorMessage(errorMessage);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +151,16 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: emailController,
                   hintText: 'Email',
                   obscureText: false,
+                ),
+
+                const SizedBox(height: 10),
+
+                // email textfield
+                MyTextfield(
+                  controller: usernameController,
+                  hintText: 'Username',
+                  obscureText: false,
+                  validator: _validateUsername,
                 ),
 
                 const SizedBox(height: 10),

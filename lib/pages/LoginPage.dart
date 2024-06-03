@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:aritmatika/components/my_button.dart';
 import 'package:aritmatika/components/my_textfield.dart';
 import 'package:aritmatika/components/square_tile.dart';
+import 'package:aritmatika/utils/AuthErrors.dart';
+import 'package:aritmatika/services/UserService.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -33,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // sign user in method
+  // sign user in method
   void signUserIn() async {
     // show loading circle
     showDialog(
@@ -45,9 +48,16 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     try {
-      // try sign in
+      String email = emailController.text;
+      // Check if the entered text is a valid email
+      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+        // If not a valid email, assume it's a username and retrieve email
+        email = await UserService.getEmailByUsername(email) ?? '';
+      }
+
+      // Try sign in
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
+        email: email,
         password: passwordController.text,
       );
 
@@ -61,20 +71,14 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pop(context);
       }
 
-      String errorMessage;
-
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Wrong password provided.';
-      } else {
-        errorMessage = 'An error occurred. Please try again.';
-      }
+      String errorMessage = AuthErrors.getErrorMessage(e.code);
+      print(e.code);
 
       // Show the error message to the user
       showErrorMessage(errorMessage);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                 // email textfield
                 MyTextfield(
                   controller: emailController,
-                  hintText: 'Email',
+                  hintText: 'Email or username',
                   obscureText: false,
                 ),
 
