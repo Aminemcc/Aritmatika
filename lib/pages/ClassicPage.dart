@@ -79,6 +79,7 @@ class _ClassicPageState extends State<ClassicPage> {
     currentOperator = '';
     setState(() {});
   }
+
   void undo(){
     if(undoNumbers.length <= 1){
       return;
@@ -90,7 +91,6 @@ class _ClassicPageState extends State<ClassicPage> {
     currentOperator = '';
     setState(() {});
   }
-
   void handleNumber(int index) {
     setState(() {
       if (selectedIndexes.length == 0) {
