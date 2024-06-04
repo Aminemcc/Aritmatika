@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:aritmatika/utils/Generator.dart';
 import 'package:aritmatika/utils/SolverUtility.dart';
 import 'package:aritmatika/services/HistoryService.dart';
 import 'package:aritmatika/services/UserService.dart';
+import 'package:aritmatika/services/LeaderboardService.dart';
 import 'package:aritmatika/pages/historyPage.dart';
+
 
 enum TimerState { start, play, end }
 
@@ -27,6 +30,8 @@ class _TimedHomePageState extends State<TimedHomePage> {
   final SolverUtility util = SolverUtility();
   final historyService = HistoryService();
   final userService = UserService();
+  final leaderboardService = LeaderboardService();
+  String? username = "";
 
   int ?bestTimeTaken = 0;
   String bestDisplayTime = "";
@@ -54,6 +59,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
   final StopWatchTimer _stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countUp,
   );
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
@@ -62,6 +68,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
   }
 
   Future<void> _initState() async {
+    username = await userService.getUsernameByUid();
     bestTimeTaken = await userService.getBestTimeTaken();
     if(bestTimeTaken != null && bestTimeTaken != -1){
       bestDisplayTime = StopWatchTimer.getDisplayTime(bestTimeTaken!, milliSecond: true);
@@ -245,14 +252,23 @@ class _TimedHomePageState extends State<TimedHomePage> {
       "timeTaken" : val,
       "displayTime" : StopWatchTimer.getDisplayTime(val, milliSecond: true)
     };
+    Map<String, dynamic> to_upload_leaderboard = {
+      "datas" : historyDatas,
+      "timeTaken" : val,
+      "displayTime" : StopWatchTimer.getDisplayTime(val, milliSecond: true),
+      "username": username
+    };
     await historyService.addHistoryEntry("timer20-29", to_upload);
     if(current_round == round + 1){
       //check for best time
       int ?bestTime = await userService.getBestTimeTaken();
       if(bestTime == null || bestTime == -1){
         await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
+        await leaderboardService.addLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
+
       } else if(bestTime > to_upload["timeTaken"]){
         await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
+        await leaderboardService.addLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
       }
     }
 
