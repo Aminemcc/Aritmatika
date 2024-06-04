@@ -146,4 +146,8 @@ dilakukan bervariasi
   </table>
 </div>
 
+# Leaderboard (WIP)
+
+![leaderboardwip](https://github.com/Aminemcc/Aritmatika/assets/96337359/c5b6361a-534b-4777-bd9d-7dc56909c4fd)
+
 
