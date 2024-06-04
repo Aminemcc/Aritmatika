@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:aritmatika/components/my_button.dart';
@@ -49,7 +50,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-
   // sign user up method
   void signUserUp() async {
     // show loading circle
@@ -89,13 +89,32 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       // Create user with email and password
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-      final userService = UserService();
+
       // Add user details to Firestore
-      await userService.addUser(usernameController.text);
+      String uid = userCredential.user!.uid;
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('profile')
+          .doc('details')
+          .set({
+        'username': usernameController.text,
+        'bio': 'Empty bio..', // initially empty bio
+      });
+
+      // Add initial status
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .collection('id status')
+          .doc('status')
+          .set({
+        'status': 'active', // initial status
+      });
 
       // Close loading circle on successful register
       if (Navigator.canPop(context)) {
@@ -113,7 +132,6 @@ class _RegisterPageState extends State<RegisterPage> {
       showErrorMessage(errorMessage);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 10),
 
-                // email textfield
+                // username textfield
                 MyTextfield(
                   controller: usernameController,
                   hintText: 'Username',
