@@ -44,3 +44,75 @@ dilakukan bervariasi
     </tr>
   </table>
 </div>
+
+## Classic
+
+<div style="text-align: center;">
+  <table style="margin: 0 auto;">
+    <tr>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_classic_setting.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_classic_play.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_classic_history.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_classic_history_solved.jpeg" width="200" height="400">
+      </td>
+    </tr>
+  </table>
+</div>
+
+## Bitwise & Random
+
+<div style="text-align: center;">
+  <table style="margin: 0 auto;">
+    <tr>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_bitwise_play.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_bitwise_history.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_random_setting.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_random_history.jpeg" width="200" height="400">
+      </td>
+    </tr>
+  </table>
+</div>
+
+## Timed
+
+<div style="text-align: center;">
+  <table style="margin: 0 auto;">
+    <tr>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_timed_start.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_timed_play.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_timed_end.jpeg" width="200" height="400">
+      </td>
+    </tr>
+  </table>
+</div>
+
+# Struktur Database
+
+<div style="text-align: center;">
+  <table style="margin: 0 auto;">
+    <tr>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/aritmatika_firebase_1.jpg" width="500" height="200">
+      </td>
+    </tr>
+  </table>
+</div>
