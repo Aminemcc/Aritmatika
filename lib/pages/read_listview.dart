@@ -10,7 +10,7 @@ class ReadListView extends StatefulWidget {
 
 class _ReadListViewState extends State<ReadListView> {
   final _userStream = 
-    FirebaseFirestore.instance.collection('leaderboard').snapshots();
+    FirebaseFirestore.instance.collection('leaderboard').orderBy('score', descending: false).snapshots();
 
 
   @override
