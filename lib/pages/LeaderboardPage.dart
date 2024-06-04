@@ -17,7 +17,7 @@ class _ReadListViewState extends State<ReadListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Read from Firestore'),
+        title: const Text('Leaderboard'),
       ),
       body: StreamBuilder(
         stream: _userStream,
@@ -38,7 +38,7 @@ class _ReadListViewState extends State<ReadListView> {
               return ListTile(
                 leading: const Icon(Icons.person),
                 title: Text(docs[index]['name']),
-                subtitle: Text('${docs[index]['score']} seconds'),
+                subtitle: Text('time : ${docs[index]['score']}'),
               );
             }
           );
