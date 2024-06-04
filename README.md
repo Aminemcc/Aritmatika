@@ -14,11 +14,33 @@ dilakukan bervariasi
 
 ## Login Page & Register Page
 
-<p align="center">
-  <table>
+<div style="text-align: center;">
+  <table style="margin: 0 auto;">
     <tr>
-      <td><img src="./assets/readme_images/tampilan_awal_login.jpeg" width="200" height="400"></td>
-      <td><img src="./assets/readme_images/tampilan_awal_register.jpeg" width="200" height="400"></td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_login.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_register.jpeg" width="200" height="400">
+      </td>
     </tr>
   </table>
-</p>
+</div>
+
+## Home Page, Help Page, Solver Page
+
+<div style="text-align: center;">
+  <table style="margin: 0 auto;">
+    <tr>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_home.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_help.jpeg" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_awal_solver.jpeg" width="200" height="400">
+      </td>
+    </tr>
+  </table>
+</div>
