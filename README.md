@@ -128,11 +128,22 @@ dilakukan bervariasi
 
 <div style="text-align: center;">
   <table style="margin: 0 auto;">
-    <tr>
+    <tr style="margin-bottom: 20px;">
       <td style="text-align: center;">
         <img src="./assets/readme_images/aritmatika_firebase_1.jpg" width="500" height="200">
       </td>
     </tr>
+    <tr style="margin-bottom: 20px;">
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/aritmatika_firebase_profile.png" width="500">
+      </td>
+    </tr>
+    <tr style="margin-bottom: 20px;">
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/aritmatika_profile_1.png" width="500">
+      </td>
+    </tr>
   </table>
 </div>
+
 
