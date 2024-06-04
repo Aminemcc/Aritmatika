@@ -27,6 +27,25 @@ dilakukan bervariasi
   </table>
 </div>
 
+## Home Page, Drawer, Profile Page
+
+<div style="text-align: center;">
+  <table style="margin: 0 auto;">
+    <tr>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_home_dengan_drawer.png" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_drawer.png" width="200" height="400">
+      </td>
+      <td style="text-align: center;">
+        <img src="./assets/readme_images/tampilan_profile_awal.png" width="200" height="400">
+      </td>
+    </tr>
+  </table>
+</div>
+
+
 ## Home Page, Help Page, Solver Page
 
 <div style="text-align: center;">
@@ -116,3 +135,4 @@ dilakukan bervariasi
     </tr>
   </table>
 </div>
+
