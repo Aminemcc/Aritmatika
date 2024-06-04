@@ -12,18 +12,13 @@ dilakukan bervariasi
 
 # Tampilan Awal
 
-## Login Page
+## Login Page & Register Page
 
 <p align="center">
-<img 
-src="./assets/readme_images/tampilan_awal_login.jpeg" 
-width="150" height="300">
-</p>
-
-## Register Page
-
-<p align="center">
-<img 
-src="./assets/readme_images/tampilan_awal_register.jpeg" 
-width="150" height="300">
+  <table>
+    <tr>
+      <td><img src="./assets/readme_images/tampilan_awal_login.jpeg" width="200" height="400"></td>
+      <td><img src="./assets/readme_images/tampilan_awal_register.jpeg" width="200" height="400"></td>
+    </tr>
+  </table>
 </p>
