@@ -16,7 +16,7 @@ dilakukan bervariasi
 
 <p align="center">
 <img 
-src="./assets/readme_imges/tampilan_awal_login.jpeg" 
+src="./assets/readme_images/tampilan_awal_login.jpeg" 
 width="150" height="300">
 </p>
 
@@ -24,6 +24,6 @@ width="150" height="300">
 
 <p align="center">
 <img 
-src="./assets/readme_imges/tampilan_awal_register.jpeg" 
+src="./assets/readme_images/tampilan_awal_register.jpeg" 
 width="150" height="300">
 </p>
