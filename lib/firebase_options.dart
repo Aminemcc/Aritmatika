@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAJyeNdrNgnVOueuU-GnTew5APq-p5nVGw',
-    appId: '1:108092257801:android:df7a987c6976852d7d2ad8',
+    appId: '1:108092257801:android:72ee69fe0e0898a37d2ad8',
     messagingSenderId: '108092257801',
     projectId: 'aritmatika-6bb60',
     storageBucket: 'aritmatika-6bb60.appspot.com',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAhzYV44TgqRD401wwLjLjOmiH3VBHiUMY',
-    appId: '1:108092257801:ios:de1014250218f2197d2ad8',
+    appId: '1:108092257801:ios:2197a2d18944b1c97d2ad8',
     messagingSenderId: '108092257801',
     projectId: 'aritmatika-6bb60',
     storageBucket: 'aritmatika-6bb60.appspot.com',
-    iosBundleId: 'com.example.app',
+    iosBundleId: 'com.example.profile',
   );
+
 }

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/services/UserService.dart';
+import 'package:aritmatika/services/UserService.dart';
 
 class LeaderboardService {
   final maxListed = 100; // maximum displayed player in top leaderboards
@@ -47,6 +47,23 @@ class LeaderboardService {
       'timestamp': FieldValue.serverTimestamp(),
     });
   }
+
+  Future<void> addSubHistoryEntries(String mode, List<Map<String, dynamic>> dataList, String uid, String collectionName) async {
+    CollectionReference collection = _getCollectionByMode(mode);
+    CollectionReference subCollection = collection.doc(uid).collection(collectionName);
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    for (int i = 0; i < dataList.length; i++) {
+      int round = i + 1;
+      Map<String, dynamic> data = dataList[i];
+      DocumentReference docRef = subCollection.doc(round.toString());
+      batch.set(docRef, data);
+    }
+
+    await batch.commit();
+  }
+
 
   Future<void> updateLeaderboardEntry(String mode, String uid, Map<String, dynamic> data) {
     CollectionReference collection = _getCollectionByMode(mode);
