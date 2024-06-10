@@ -29,19 +29,27 @@ class _ReadLeaderboardState extends State<ReadLeaderboard> {
         actions: [ 
           IconButton(
             onPressed: () {}, 
-            icon: Icon(Icons.emoji_events_outlined)
+            icon: const Icon(Icons.emoji_events_outlined)
             ),
           ],
         ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: leaderboardService.getHistoryStream('timer_20_29'), // ???
+        stream: leaderboardService.getHistoryStream('timer_20_29'),
         builder: (context, snapshot){
           //if data exist get all docs
           if(snapshot.hasData){
             List leaderboardList = snapshot.data!.docs;
 
             //display as list
-            return ListView.builder(
+            return ListView.separated(
+              shrinkWrap: false,
+              separatorBuilder: 
+                (context, index) => const Divider(
+                  thickness: 1,
+                  color: Colors.green, 
+                  indent: 10,
+                  endIndent: 10,
+                ),
               itemCount: leaderboardList.length,
               itemBuilder: (context, index) {
                 //get each doc
@@ -54,14 +62,31 @@ class _ReadLeaderboardState extends State<ReadLeaderboard> {
                 String username = data ['username'];
                 String time = data ['displayTime'];
 
-                //TODO get score, timestamp, and other stuff
-
                 //TODO change mode = change leaderboard?
 
-                return ListTile(
-                  title: Text(username),
-                  subtitle: Text(time),
 
+                return ListTile(
+                  
+                  leading: Text(
+                    "#${index+1}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0,
+                    ),                    
+                    ),
+
+                  title: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.green[300],
+                        child: Text(username[0].toUpperCase()), //foto profil placeholder?
+                      ),
+                      const SizedBox(width: 5),
+                      Text(username),
+                    ],
+                  ),
+                  
+                  subtitle: Text("Best Record: $time"),
                   //TODO highlight user when top 100
 
                   //TODO show user even if not top 100
