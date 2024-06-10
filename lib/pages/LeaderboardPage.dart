@@ -1,49 +1,80 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '/services/LeaderboardService.dart';
 
-class ReadListView extends StatefulWidget {
-  const ReadListView({super.key});
+class ReadLeaderboard extends StatefulWidget {
+  const ReadLeaderboard({super.key});
 
   @override
-  State<ReadListView> createState() => _ReadListViewState();
+  State<ReadLeaderboard> createState() => _ReadLeaderboardState();
 }
 
-class _ReadListViewState extends State<ReadListView> {
-  final _userStream = 
-    FirebaseFirestore.instance.collection('leaderboard').orderBy('score', descending: false).snapshots();
-
+class _ReadLeaderboardState extends State<ReadLeaderboard> {
+  final String mode = ""; 
+  final LeaderboardService leaderboardService = LeaderboardService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Leaderboard'),
-      ),
-      body: StreamBuilder(
-        stream: _userStream,
-        builder: (context, snapshot) {
-          if(snapshot.hasError) {
-            return const Text('Connection Error');
+        centerTitle: true,
+        backgroundColor: Colors.green,
+        elevation: 0,
+        leading: 
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.menu),
+        ),
+        title: const Text("L E A D E R B O A R D"),
+        actions: [ 
+          IconButton(
+            onPressed: () {}, 
+            icon: Icon(Icons.emoji_events_outlined)
+            ),
+          ],
+        ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: leaderboardService.getHistoryStream('timer_20_29'), // ???
+        builder: (context, snapshot){
+          //if data exist get all docs
+          if(snapshot.hasData){
+            List leaderboardList = snapshot.data!.docs;
+
+            //display as list
+            return ListView.builder(
+              itemCount: leaderboardList.length,
+              itemBuilder: (context, index) {
+                //get each doc
+                DocumentSnapshot document = leaderboardList[index];
+                String docID = document.id;
+
+                //get note from each doc
+                Map<String, dynamic> data = 
+                  document.data() as Map<String, dynamic>;
+                String username = data ['username'];
+                String time = data ['displayTime'];
+
+                //TODO get score, timestamp, and other stuff
+
+                //TODO change mode = change leaderboard?
+
+                return ListTile(
+                  title: Text(username),
+                  subtitle: Text(time),
+
+                  //TODO highlight user when top 100
+
+                  //TODO show user even if not top 100
+                );
+              }
+            );
           }
 
-          if(snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Loading...');
-          }
-
-          var docs = snapshot.data!.docs;
-          // return Text('${docs.length}');
-          return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: const Icon(Icons.person),
-                title: Text(docs[index]['name']),
-                subtitle: Text('time : ${docs[index]['score']}'),
-              );
-            }
-          );
-        },
-      ),
+        else {
+          return const Text("no data found");
+        }
+        }
+      )
     );
   }
-}
+  }
