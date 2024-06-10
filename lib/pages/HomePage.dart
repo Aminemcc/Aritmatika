@@ -1,3 +1,4 @@
+import 'package:aritmatika/pages/LeaderboardPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:aritmatika/pages/HelpPage.dart';
@@ -170,6 +171,23 @@ class _HomePageState extends State<HomePage> {
                   },
                   child: Text(
                     'Logout',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LeaderboardPage()),
+                    );
+                  },
+                  child: Text(
+                    'Leaderboard',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,

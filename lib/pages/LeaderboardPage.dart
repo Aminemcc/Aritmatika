@@ -2,14 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '/services/LeaderboardService.dart';
 
-class ReadLeaderboard extends StatefulWidget {
-  const ReadLeaderboard({super.key});
+class LeaderboardPage extends StatefulWidget {
+  const LeaderboardPage({super.key});
 
   @override
-  State<ReadLeaderboard> createState() => _ReadLeaderboardState();
+  State<LeaderboardPage> createState() => _LeaderboardPageState();
 }
 
-class _ReadLeaderboardState extends State<ReadLeaderboard> {
+class _LeaderboardPageState extends State<LeaderboardPage> {
   final String mode = ""; 
   final LeaderboardService leaderboardService = LeaderboardService();
 
