@@ -6,6 +6,7 @@ import 'package:aritmatika/utils/SolverUtility.dart';
 import 'package:aritmatika/services/HistoryService.dart';
 import 'package:aritmatika/services/UserService.dart';
 import 'package:aritmatika/services/LeaderboardService.dart';
+import 'package:aritmatika/services/SettingService.dart';
 import 'package:aritmatika/pages/historyPage.dart';
 
 
@@ -23,7 +24,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
   final int n = 4;
   final int targetMin = 20;
   final int targetMax = 29;
-  final int round = 1;
+  int round = 0;
   final List<String> operators = ["+", "-", "*", "/"];
 
   final Generator generator = Generator();
@@ -76,6 +77,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
       bestTimeTaken = -1;
       bestDisplayTime = "??:??:??:??";
     }
+    round = await SettingService.getField("timed", "round");
     previous_time = 0;
     current_round = 1;
     _currentState = TimerState.start;
@@ -140,7 +142,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
   }
 
   Future<void> _handleBackPressed() async {
-    print('User pressed back');
+    // print('User pressed back');
     await endGame();
 
     _stopAndShowTime();
@@ -280,7 +282,10 @@ class _TimedHomePageState extends State<TimedHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Timed Home Page'),
+        title: Text(
+        _currentState == TimerState.play
+        ? 'Round $current_round / $round'
+        : 'Timed Home Page',)
       ),
       body: Center(
         child: Column(
