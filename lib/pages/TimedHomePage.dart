@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:aritmatika/utils/Generator.dart';
@@ -7,6 +8,7 @@ import 'package:aritmatika/services/HistoryService.dart';
 import 'package:aritmatika/services/UserService.dart';
 import 'package:aritmatika/services/LeaderboardService.dart';
 import 'package:aritmatika/services/SettingService.dart';
+import 'package:aritmatika/pages/TimedAttemptsPage.dart';
 import 'package:aritmatika/pages/historyPage.dart';
 
 
@@ -34,6 +36,9 @@ class _TimedHomePageState extends State<TimedHomePage> {
   final leaderboardService = LeaderboardService();
   String? username = "";
 
+  bool historyUploaded = false;
+
+  int timeTaken = 0;
   int ?bestTimeTaken = 0;
   String bestDisplayTime = "";
 
@@ -113,12 +118,14 @@ class _TimedHomePageState extends State<TimedHomePage> {
     isSelected = List.generate(numbers.length, (index) => false);
     undoNumbers.add(List.from(numbers));
     historyData = {
+      "round": current_round,
       "numbers": startNumbers,
       "target": target,
       "operators": operators,
       "isSolved": isSolved,
       "timeTaken" : -1,
-      "displayTime" : "null"
+      "displayTime" : "null",
+      "timestamp" : FieldValue.serverTimestamp()
     };
     historyDatas.add(historyData);
   }
@@ -142,7 +149,6 @@ class _TimedHomePageState extends State<TimedHomePage> {
   }
 
   Future<void> _handleBackPressed() async {
-    // print('User pressed back');
     await endGame();
 
     _stopAndShowTime();
@@ -237,6 +243,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
 
   Future<void> updateHistoryDatas(int i) async {
     int val = await _stopWatchTimer.rawTime.first;
+    historyDatas[i-1]['round'] = current_round;
     historyDatas[i-1]["isSolved"] = true;
     historyDatas[i-1]["timeTaken"] = val - previous_time;
     previous_time = val;
@@ -245,37 +252,44 @@ class _TimedHomePageState extends State<TimedHomePage> {
 
   Future<void> endGame() async {
     _currentState = TimerState.end;
-    _stopWatchTimer.onStopTimer();
-    int val = await _stopWatchTimer.rawTime.first;
+    if (_stopWatchTimer.isRunning) {
+      _stopWatchTimer.onStopTimer();
+      timeTaken = await _stopWatchTimer.rawTime.first;
+    }
+    bool isCleared = current_round == round + 1;
     Map<String, dynamic> to_upload = {
-      "datas" : historyDatas,
-      "isCleared" : current_round == round + 1,
+      // "datas" : historyDatas,
+      "isCleared" : isCleared,
       "clearedRound" : current_round - 1,
-      "timeTaken" : val,
-      "displayTime" : StopWatchTimer.getDisplayTime(val, milliSecond: true)
+      "timeTaken" : timeTaken,
+      "displayTime" : StopWatchTimer.getDisplayTime(timeTaken, milliSecond: true)
     };
+    String docId = await historyService.addHistoryEntry("timer20-29", to_upload);
+    await historyService.addSubHistoryEntries("timer20-29", historyDatas, docId, "datas");
+
+
     Map<String, dynamic> to_upload_leaderboard = {
-      "datas" : historyDatas,
-      "timeTaken" : val,
-      "displayTime" : StopWatchTimer.getDisplayTime(val, milliSecond: true),
+      // "datas" : historyDatas,
+      "timeTaken" : timeTaken,
+      "displayTime" : StopWatchTimer.getDisplayTime(timeTaken, milliSecond: true),
       "username": username
     };
-    await historyService.addHistoryEntry("timer20-29", to_upload);
-    if(current_round == round + 1){
-      //check for best time
+    bool updateTime = false;
+    if(isCleared){
       int ?bestTime = await userService.getBestTimeTaken();
       if(bestTime == null || bestTime == -1){
         await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
         await leaderboardService.addLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
-
+        updateTime = true;
       } else if(bestTime > to_upload["timeTaken"]){
         await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
-        await leaderboardService.addLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
+        await leaderboardService.updateLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
+        updateTime = true;
+      }
+      if(updateTime){
+        await leaderboardService.addSubHistoryEntries("timer_20_29", historyDatas, user.uid, "datas");
       }
     }
-
-
-    //extra things
   }
 
   @override
@@ -285,7 +299,18 @@ class _TimedHomePageState extends State<TimedHomePage> {
         title: Text(
         _currentState == TimerState.play
         ? 'Round $current_round / $round'
-        : 'Timed Home Page',)
+        : 'Timed Home Page',),
+        actions: _currentState != TimerState.play ? <Widget>[
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TimedAttemptsPage(mode: "timer20-29")),
+              );
+            },
+          ),
+        ] : null,
       ),
       body: Center(
         child: Column(

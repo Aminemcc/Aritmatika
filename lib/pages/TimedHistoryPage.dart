@@ -4,56 +4,25 @@ import 'package:intl/intl.dart';
 import 'package:aritmatika/services/HistoryService.dart';
 import 'package:aritmatika/pages/SolverPage.dart';
 
-class HistoryPage extends StatefulWidget {
+class TimedHistoryPage extends StatefulWidget {
   final String mode;
-
-  HistoryPage({required this.mode});
+  final String docId;
+  TimedHistoryPage({required this.mode, required this.docId});
 
   @override
-  _HistoryPageState createState() => _HistoryPageState();
+  _TimedHistoryPageState createState() => _TimedHistoryPageState();
 }
 
-class _HistoryPageState extends State<HistoryPage> {
+class _TimedHistoryPageState extends State<TimedHistoryPage> {
   final HistoryService historyService = HistoryService();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('History (${widget.mode})'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed:() {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text("Delete All History?"),
-                  content: Text("Apakah Anda yakin ingin menghapus seluruh history?"),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text("Cancel")
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        historyService.deleteAllHistoryEntries(widget.mode);
-                        Navigator.pop(context);
-                      },
-                      child: Text("Delete"),
-                      style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                      ),
-                    )
-                  ]
-                )
-              );
-            }
-          )
-        ]
+          title: Text('Timed History'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: historyService.getHistoryStream(widget.mode),
+        stream: historyService.getSubHistoryStream(widget.mode, widget.docId, "datas"),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -71,10 +40,12 @@ class _HistoryPageState extends State<HistoryPage> {
               DocumentSnapshot doc = snapshot.data!.docs[index];
               Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
+              int round = data['round'];
               List<dynamic> numbers = data['numbers'];
               double target = data['target'];
               List<dynamic> operators = data['operators'];
               bool isSolved = data['isSolved'];
+              String displayTime = data['displayTime'];
               Timestamp timestamp = data['timestamp'];
               String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(timestamp.toDate());
 
@@ -108,7 +79,7 @@ class _HistoryPageState extends State<HistoryPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Target: ${target.toInt()}',
+                                'Round ${round}',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -119,6 +90,11 @@ class _HistoryPageState extends State<HistoryPage> {
                                 color: isSolved ? Colors.green : Colors.red,
                               ),
                             ],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Target : ${target.toInt()}',
+                            style: TextStyle(fontSize: 16),
                           ),
                           SizedBox(height: 8),
                           Text(
@@ -140,12 +116,13 @@ class _HistoryPageState extends State<HistoryPage> {
                           // ),
                           SizedBox(height: 8),
                           Text(
-                            '$formattedDate',
+                            '$displayTime',
                             style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () => historyService.deleteHistoryEntry(widget.mode, doc.id),
+                          SizedBox(height: 8),
+                          Text(
+                            '$formattedDate',
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
                           ),
                         ],
                       ),

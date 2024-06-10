@@ -66,6 +66,20 @@ class HistoryService {
     return docRef.id; // Return the document ID
   }
 
+  Future<void> addSubHistoryEntries(String mode, List<Map<String, dynamic>> dataList, String docId, String collectionName) async {
+    CollectionReference collection = _getCollectionByMode(mode);
+    CollectionReference subCollection = collection.doc(docId).collection(collectionName);
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    for (Map<String, dynamic> data in dataList) {
+      DocumentReference docRef = subCollection.doc();
+      batch.set(docRef, data);
+    }
+    await batch.commit();
+  }
+
+
   Future<void> updateHistoryEntry(String mode, String documentId, Map<String, dynamic> data) {
     CollectionReference collection = _getCollectionByMode(mode);
     return collection.doc(documentId).update({
@@ -101,10 +115,35 @@ class HistoryService {
     return collection.orderBy('timestamp', descending: true).snapshots();
   }
 
+  Stream<QuerySnapshot> getSubHistoryStream(String mode, String docId, String collectionName) {
+    CollectionReference collection = _getCollectionByMode(mode);
+    CollectionReference subCollection = collection.doc(docId).collection(collectionName);
+    return subCollection.orderBy('timestamp', descending: false).snapshots();
+  }
+
   Future<QuerySnapshot> getHistoryEntries(String mode) {
     CollectionReference collection = _getCollectionByMode(mode);
     return collection.orderBy('timestamp', descending: true).get();
   }
+
+  //-----Timed Mode-----//
+  Stream<QuerySnapshot> getTimedAttemptStream(String mode) {
+    CollectionReference collection = _getCollectionByMode(mode);
+    return collection.orderBy('timestamp', descending: true).snapshots();
+  }
+
+  Stream<List<Map<String, dynamic>>> getTimedAttemptDetail(String mode, String docId) {
+    CollectionReference collection = _getCollectionByMode(mode);
+    return collection.doc(docId).snapshots().map((DocumentSnapshot snapshot) {
+      if (snapshot.exists) {
+        var data = snapshot.data() as Map<String, dynamic>;
+        return List<Map<String, dynamic>>.from(data['datas']);
+      } else {
+        return [];
+      }
+    });
+  }
+
 
 
   //-----Stage Mode-----//
