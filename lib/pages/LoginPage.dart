@@ -35,9 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // sign user in method
-  // sign user in method
   void signUserIn() async {
-    // show loading circle
     showDialog(
       context: context,
       builder: (context) {
@@ -49,36 +47,30 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       String email = emailController.text;
-      // Check if the entered text is a valid email
+      // Check if input is an email
       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
-        // If not a valid email, assume it's a username and retrieve email
+        // Try to get email by username
         email = await UserService.getEmailByUsername(email) ?? '';
       }
 
-      // Try sign in
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: passwordController.text,
       );
 
-      // Close loading circle on successful login
       if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
     } on FirebaseAuthException catch (e) {
-      // Close loading circle before showing error
       if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
 
       String errorMessage = AuthErrors.getErrorMessage(e.code);
       print(e.code);
-
-      // Show the error message to the user
       showErrorMessage(errorMessage);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -91,16 +83,8 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 25),
-
-                // logo
-                const Icon(
-                  Icons.lock,
-                  size: 100,
-                ),
-
+                const Icon(Icons.lock, size: 100),
                 const SizedBox(height: 25),
-
-                // welcome back, you've been missed!
                 Text(
                   'Welcome back you\'ve been missed',
                   style: TextStyle(
@@ -108,28 +92,19 @@ class _LoginPageState extends State<LoginPage> {
                     fontSize: 16,
                   ),
                 ),
-
                 const SizedBox(height: 25),
-
-                // email textfield
                 MyTextfield(
                   controller: emailController,
                   hintText: 'Email or username',
                   obscureText: false,
                 ),
-
                 const SizedBox(height: 10),
-
-                // password textfield
                 MyTextfield(
                   controller: passwordController,
                   hintText: 'Password',
                   obscureText: true,
                 ),
-
                 const SizedBox(height: 10),
-
-                // forgot password
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Row(
@@ -142,18 +117,12 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // sign in button
                 MyButton(
                   text: 'Sign In',
                   onTap: signUserIn,
                 ),
-
                 const SizedBox(height: 50),
-
-                // or continue with
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Row(
@@ -180,26 +149,16 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 50),
-
-                // google + apple sign in buttons
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // google button
                     SquareTile(imagePath: 'assets/images/google.png'),
-
-                    const SizedBox(width: 10),
-
-                    // apple button
+                    SizedBox(width: 10),
                     SquareTile(imagePath: 'assets/images/apple.png'),
                   ],
                 ),
-
                 const SizedBox(height: 50),
-
-                // not a member? register now
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

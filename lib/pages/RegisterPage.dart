@@ -76,7 +76,8 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       // Check if username is available
-      bool isAvailable = await UserService.usernameAvailable(usernameController.text);
+      bool isAvailable =
+      await UserService.usernameAvailable(usernameController.text);
       if (!isAvailable) {
         // Close loading circle
         if (Navigator.canPop(context)) {
@@ -89,32 +90,13 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       // Create user with email and password
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
 
       // Add user details to Firestore
-      String uid = userCredential.user!.uid;
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('profile')
-          .doc('details')
-          .set({
-        'username': usernameController.text,
-        'bio': 'Empty bio..', // initially empty bio
-      });
-
-      // Add initial status
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .collection('id status')
-          .doc('status')
-          .set({
-        'status': 'active', // initial status
-      });
+      await UserService().addUser(usernameController.text);
 
       // Close loading circle on successful register
       if (Navigator.canPop(context)) {
@@ -173,7 +155,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 10),
 
-                // username textfield
+                // email textfield
                 MyTextfield(
                   controller: usernameController,
                   hintText: 'Username',
