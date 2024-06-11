@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:aritmatika/utils/Generator.dart';
@@ -7,7 +8,9 @@ import 'package:aritmatika/services/HistoryService.dart';
 import 'package:aritmatika/services/UserService.dart';
 import 'package:aritmatika/services/LeaderboardService.dart';
 import 'package:aritmatika/services/SettingService.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:aritmatika/pages/TimedAttemptsPage.dart';
+import 'package:aritmatika/pages/historyPage.dart';
+
 
 enum TimerState { start, play, end }
 
@@ -36,7 +39,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
   bool historyUploaded = false;
 
   int timeTaken = 0;
-  int? bestTimeTaken = 0;
+  int ?bestTimeTaken = 0;
   String bestDisplayTime = "";
 
   Map<String, dynamic> gameData = {};
@@ -73,9 +76,9 @@ class _TimedHomePageState extends State<TimedHomePage> {
   Future<void> _initState() async {
     username = await userService.getUsernameByUid();
     bestTimeTaken = await userService.getBestTimeTaken();
-    if (bestTimeTaken != null && bestTimeTaken != -1) {
+    if(bestTimeTaken != null && bestTimeTaken != -1){
       bestDisplayTime = StopWatchTimer.getDisplayTime(bestTimeTaken!, milliSecond: true);
-    } else {
+    } else{
       bestTimeTaken = -1;
       bestDisplayTime = "??:??:??:??";
     }
@@ -93,8 +96,8 @@ class _TimedHomePageState extends State<TimedHomePage> {
     setState(() {});
   }
 
-  void fetchGameData() {
-    for (int i = 0; i < round; i++) {
+  fetchGameData() {
+    for(int i = 0; i < round; i++){
       isSolved = false;
       numbers.clear();
       undoNumbers.clear();
@@ -104,13 +107,13 @@ class _TimedHomePageState extends State<TimedHomePage> {
     }
   }
 
-  void newNumbers(int i) {
+  void newNumbers(int i){
     // i = current round (start from 1)
     numbers.clear();
     undoNumbers.clear();
     selectedIndexes.clear();
-    startNumbers = List<int>.from(gameDatas[i - 1]['numbers']);
-    target = gameDatas[i - 1]['target'].toDouble();
+    startNumbers = gameDatas[i-1]['numbers'];
+    target = gameDatas[i-1]['target'].toDouble();
     numbers.addAll(startNumbers.map<double>((e) => e.toDouble()).toList());
     isSelected = List.generate(numbers.length, (index) => false);
     undoNumbers.add(List.from(numbers));
@@ -120,12 +123,13 @@ class _TimedHomePageState extends State<TimedHomePage> {
       "target": target,
       "operators": operators,
       "isSolved": isSolved,
-      "timeTaken": -1,
-      "displayTime": "null",
-      "timestamp": FieldValue.serverTimestamp()
+      "timeTaken" : -1,
+      "displayTime" : "null",
+      "timestamp" : FieldValue.serverTimestamp()
     };
     historyDatas.add(historyData);
   }
+
 
   void _startTimer() {
     setState(() {
@@ -135,6 +139,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
       _stopWatchTimer.onStartTimer();
     });
   }
+
 
   void _stopAndShowTime() {
     setState(() {
@@ -152,6 +157,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
     }
   }
 
+
   void reset() {
     numbers.clear();
     undoNumbers.clear();
@@ -164,8 +170,8 @@ class _TimedHomePageState extends State<TimedHomePage> {
     setState(() {});
   }
 
-  void undo() {
-    if (undoNumbers.length <= 1) {
+  void undo(){
+    if(undoNumbers.length <= 1){
       return;
     }
     numbers.clear();
@@ -178,7 +184,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
 
   void handleNumber(int index) {
     setState(() {
-      if (selectedIndexes.isEmpty) {
+      if (selectedIndexes.length == 0) {
         selectedIndexes.add(index);
         isSelected[index] = !isSelected[index];
       } else {
@@ -202,7 +208,7 @@ class _TimedHomePageState extends State<TimedHomePage> {
       double result = numbers[selectedIndexes[0]];
       for (int i = 1; i < selectedIndexes.length; i++) {
         result = util.calculateDouble(result, numbers[selectedIndexes[i]], operator);
-        if (result == util.infinity || result == util.infinityDouble) {
+        if(result == util.infinity || result == util.infinityDouble){
           throw Exception('Error');
         }
       }
@@ -216,14 +222,17 @@ class _TimedHomePageState extends State<TimedHomePage> {
       isSelected.add(false);
       undoNumbers.add(List.from(numbers)); // Save the state after applying the operator
       currentOperator = ''; // Deselect the operator
-      if (result == target && numbers.length == 1) {
+      if(result == target && numbers.length == 1){
         await updateHistoryDatas(current_round);
         ++current_round;
-        if (current_round > round) {
+        if(current_round > round){
           await endGame();
-        } else {
+        } else{
           newNumbers(current_round);
         }
+        // isSolved = true;
+        // historyData["isSolved"] = true;
+        // updateSolvedStatus();
       }
       setState(() {}); // Update the UI after all state changes
     } catch (e) {
@@ -231,138 +240,263 @@ class _TimedHomePageState extends State<TimedHomePage> {
     }
   }
 
+
   Future<void> updateHistoryDatas(int i) async {
     int val = await _stopWatchTimer.rawTime.first;
-    historyDatas[i - 1]['round'] = current_round;
-    historyDatas[i - 1]["isSolved"] = true;
-    historyDatas[i - 1]["timeTaken"] = val - previous_time;
-    historyDatas[i - 1]["displayTime"] = StopWatchTimer.getDisplayTime(val - previous_time, milliSecond: true);
+    historyDatas[i-1]['round'] = current_round;
+    historyDatas[i-1]["isSolved"] = true;
+    historyDatas[i-1]["timeTaken"] = val - previous_time;
     previous_time = val;
-    historyData = historyDatas[i - 1];
-    historyId = await historyService.addHistoryEntry(mode, historyData);
-
-    // Upload to leaderboard
-    if (current_round > round) {
-      await leaderboardService.addLeaderboardEntry("timer_20_29", user.uid, {
-        "username": username,
-        "timeTaken": previous_time,
-      });
-    }
+    historyDatas[i-1]["displayTime"] = StopWatchTimer.getDisplayTime(historyDatas[i-1]["timeTaken"], milliSecond: true);
   }
 
   Future<void> endGame() async {
-    _stopWatchTimer.onStopTimer();
-    if (!historyUploaded) {
-      historyUploaded = true;
-      for (int i = 0; i < historyDatas.length; i++) {
-        await historyService.updateHistoryEntry(historyId, mode, historyDatas[i]);
+    _currentState = TimerState.end;
+    if (_stopWatchTimer.isRunning) {
+      _stopWatchTimer.onStopTimer();
+      timeTaken = await _stopWatchTimer.rawTime.first;
+    }
+    bool isCleared = current_round == round + 1;
+    Map<String, dynamic> to_upload = {
+      // "datas" : historyDatas,
+      "isCleared" : isCleared,
+      "clearedRound" : current_round - 1,
+      "timeTaken" : timeTaken,
+      "displayTime" : StopWatchTimer.getDisplayTime(timeTaken, milliSecond: true)
+    };
+    String docId = await historyService.addHistoryEntry("timer20-29", to_upload);
+    await historyService.addSubHistoryEntries("timer20-29", historyDatas, docId, "datas");
+
+
+    Map<String, dynamic> to_upload_leaderboard = {
+      // "datas" : historyDatas,
+      "timeTaken" : timeTaken,
+      "displayTime" : StopWatchTimer.getDisplayTime(timeTaken, milliSecond: true),
+      "username": username
+    };
+    bool updateTime = false;
+    if(isCleared){
+      int ?bestTime = await userService.getBestTimeTaken();
+      if(bestTime == null || bestTime == -1){
+        await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
+        await leaderboardService.addLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
+        updateTime = true;
+      } else if(bestTime > to_upload["timeTaken"]){
+        await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
+        await leaderboardService.updateLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
+        updateTime = true;
+      }
+      if(updateTime){
+        await leaderboardService.addSubHistoryEntries("timer_20_29", historyDatas, user.uid, "datas");
       }
     }
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _stopWatchTimer.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        await _handleBackPressed();
-        return true;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Timed Game'),
-        ),
-        body: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          _currentState == TimerState.play
+              ? 'Round $current_round / $round'
+              : 'Timed Home Page',),
+        actions: _currentState != TimerState.play ? <Widget>[
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TimedAttemptsPage(mode: "timer20-29")),
+              );
+            },
+          ),
+        ] : null,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(
-              child: Center(
-                child: Text(
-                  'Round $current_round/$round',
-                  style: TextStyle(fontSize: 24),
-                ),
-              ),
+            SizedBox(height: 20),
+            StreamBuilder<int>(
+              stream: _stopWatchTimer.rawTime,
+              initialData: 0,
+              builder: (context, snapshot) {
+                final value = snapshot.data!;
+                String text_to_display = "", displayTime;
+                if(_currentState == TimerState.play) {
+                  displayTime = StopWatchTimer.getDisplayTime(
+                      value, milliSecond: true);
+                  text_to_display = displayTime;
+                } else if (_currentState == TimerState.start){
+                  displayTime = bestDisplayTime;
+                  text_to_display = "Best Time : $displayTime";
+                } else{
+                  displayTime = StopWatchTimer.getDisplayTime(
+                      value, milliSecond: true);
+                  text_to_display = "Time Taken : $displayTime";
+                }
+                return Text(text_to_display, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),);
+              },
             ),
-            if (_currentState == TimerState.start)
-              ElevatedButton(
-                onPressed: _startTimer,
-                child: Text('Start'),
-              ),
+            _buildContent(),
             if (_currentState == TimerState.play)
-              Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      'Target: $target',
-                      style: TextStyle(fontSize: 32),
-                    ),
-                    Expanded(
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          childAspectRatio: 2,
-                        ),
-                        itemCount: numbers.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () => handleNumber(index),
-                            child: Container(
-                              margin: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                color: isSelected[index] ? Colors.blue : Colors.grey,
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  numbers[index].toString(),
-                                  style: TextStyle(fontSize: 24),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: operators.map((operator) {
-                        return ElevatedButton(
-                          onPressed: () => applyOperator(operator),
-                          child: Text(operator),
-                        );
-                      }).toList(),
-                    ),
-                    ElevatedButton(
-                      onPressed: undo,
-                      child: Text('Undo'),
-                    ),
-                    ElevatedButton(
-                      onPressed: reset,
-                      child: Text('Reset'),
-                    ),
-                  ],
+              PopScope(
+                canPop: false,
+                onPopInvoked: (bool didPop) async {
+                  if (didPop) {
+                    return;
+                  }
+                  await _handleBackPressed();
+                },
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await _handleBackPressed();
+                  },
+                  child: const Text('Stop'),
                 ),
-              ),
-            if (_currentState == TimerState.end)
-              Column(
-                children: [
-                  Text(
-                    'Game Over!',
-                    style: TextStyle(fontSize: 32),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text('Back to Menu'),
-                  ),
-                ],
               ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildContent() {
+    switch (_currentState) {
+      case TimerState.start:
+        return _buildStartState();
+      case TimerState.play:
+        return _buildPlayState();
+      case TimerState.end:
+        return _buildEndState();
+      default:
+        return _buildStartState();
+    }
+  }
+
+  Widget _buildStartState() {
+    return ElevatedButton(
+      onPressed: _startTimer,
+      child: Text('Start'),
+    );
+  }
+
+  Widget _buildPlayState() {
+    int numNumberRows = (numbers.length / 5).ceil();
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Target: ${target.toInt()}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            // Wrap numbers with SingleChildScrollView
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: List.generate(numNumberRows, (rowIndex) {
+                  int startIndex = rowIndex * 5;
+                  int endIndex = startIndex + 5 < numbers.length ? startIndex + 5 : numbers.length;
+                  return ToggleButtons(
+                    isSelected: isSelected.sublist(startIndex, endIndex),
+                    onPressed: (int index) {
+                      setState(() {
+                        handleNumber(index + startIndex);
+                      });
+                    },
+                    children: [
+                      for (int i = startIndex; i < endIndex; i++)
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                            color: isSelected[i] ? Colors.blue : null,
+                          ),
+                          child: Text(
+                            numbers[i] - numbers[i].toInt() == 0 ? numbers[i].toStringAsFixed(0) : numbers[i].toStringAsFixed(3),
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: isSelected[i] ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                }),
+              ),
+            ),
+            SizedBox(height: 20),
+            // Use Wrap widget to display operator buttons
+            Wrap(
+              alignment: WrapAlignment.spaceEvenly,
+              children: [
+                for (String operator in operators)
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        currentOperator = operator;
+                      });
+                    },
+                    child: Text(operator, style: TextStyle(fontSize: 20)),
+                    style: ButtonStyle(
+                      backgroundColor: currentOperator == operator
+                          ? MaterialStateProperty.all(Colors.blue)
+                          : null,
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                await applyOperator(currentOperator);
+              },
+              child: Text('Apply Operator'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: undo,
+              child: Text('Undo'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: reset,
+              child: Text('Reset'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEndState() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              _initState();
+            });
+          },
+          child: Text('Restart'),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _stopWatchTimer.dispose();
+    super.dispose();
   }
 }
