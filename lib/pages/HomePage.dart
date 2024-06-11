@@ -7,6 +7,7 @@ import 'package:aritmatika/pages/RandomSettingPage.dart';
 import 'package:aritmatika/pages/SolverPage.dart';
 import 'package:aritmatika/pages/TimedHomePage.dart';
 import 'package:aritmatika/pages/ProfilePage.dart';
+import 'package:aritmatika/pages/LeaderboardPage.dart';
 
 import '../components/drawer.dart';
 
@@ -51,6 +52,18 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
+  void goToLeaderboardPage() {
+    // pop menu drawer
+    Navigator.pop(context);
+
+    // go to profile page
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LeaderboardPage(),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,6 +86,7 @@ class _HomePageState extends State<HomePage> {
       drawer: MyDrawer(
         onProfileTap: goToProfilePage,
         onSignOut: signout,
+        onLeaderboardTap: goToLeaderboardPage,
       ),
       body: Stack(
         fit: StackFit.expand,

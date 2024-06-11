@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class MyDrawer extends StatelessWidget {
   final void Function()? onProfileTap;
   final void Function()? onSignOut;
+  final void Function()? onLeaderboardTap;
   const MyDrawer(
-      {super.key, required this.onProfileTap, required this.onSignOut});
+      {super.key, required this.onProfileTap, required this.onSignOut, required this.onLeaderboardTap});
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +37,12 @@ class MyDrawer extends StatelessWidget {
                 icon: Icons.person,
                 text: 'P R O F I L E',
                 onTap: onProfileTap,
+              ),
+
+              MyListTile(
+                icon: Icons.person,
+                text: 'L E A D E R B O A R D',
+                onTap: onLeaderboardTap,
               ),
             ],
           ),

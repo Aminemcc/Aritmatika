@@ -20,11 +20,11 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
         centerTitle: true,
         backgroundColor: Colors.green,
         elevation: 0,
-        leading: 
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.menu),
-        ),
+        // leading:
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: const Icon(Icons.menu),
+        // ),
         title: const Text("L E A D E R B O A R D"),
         actions: [ 
           IconButton(
