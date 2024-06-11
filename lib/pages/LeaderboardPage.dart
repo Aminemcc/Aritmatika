@@ -1,6 +1,9 @@
+import 'package:aritmatika/services/UserService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '/services/LeaderboardService.dart';
+import '/services/UserService.dart';
+import '/pages/ProfilePageDetail.dart';
 
 class LeaderboardPage extends StatefulWidget {
   const LeaderboardPage({super.key});
@@ -61,45 +64,57 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                   document.data() as Map<String, dynamic>;
                 String username = data ['username'];
                 String time = data ['displayTime'];
-
+                
                 //TODO change mode = change leaderboard?
 
 
-                return ListTile(
-                  
-                  leading: Text(
-                    "#${index+1}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0,
-                    ),                    
+                return GestureDetector(
+                  onTap: () async {
+                    var temp = 
+                      await UserService.getUserData(username); 
+                    // Handle the tap event
+                    print('Tapped on item ${temp?.id}');
+                      Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(temp?.id),
+                    ));
+                  },
+                  child: ListTile(
+                    leading: Text(
+                      "#${index+1}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                      ),                    
                     ),
 
-                  title: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.blueAccent[300],
-                        child: Text(username[0].toUpperCase()), //foto profil placeholder?
-                      ),
-                      const SizedBox(width: 5),
-                      Text(username),
-                    ],
-                  ),
-                  
-                  subtitle: Text("Best Record: $time"),
-                  //TODO highlight user when top 100
+                    title: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.blueAccent[300],
+                          child: Text(username[0].toUpperCase()), //foto profil placeholder?
+                        ),
+                        const SizedBox(width: 5),
+                        Text(username),
+                      ],
+                    ),
+                    
+                    subtitle: Text("Best Record: $time"),
+                    //TODO highlight user when top 100
 
-                  //TODO show user even if not top 100
+                    //TODO show user even if not top 100
+                  ),
                 );
               }
             );
           }
 
-        else {
-          return const Text("no data found");
-        }
+          else {
+            return const Text("no data found");
+          }
         }
       )
     );
   }
-  }
+}

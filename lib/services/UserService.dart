@@ -24,6 +24,18 @@ class UserService {
     return querySnapshot.docs.isEmpty;
   }
 
+static Future<DocumentReference?> getUserData(String username) async {
+  final users = FirebaseFirestore.instance.collection('users');
+  final querySnapshot = await users.where('username', isEqualTo: username).get();
+  
+  if (querySnapshot.docs.isNotEmpty) {
+    return querySnapshot.docs.first.reference;
+  } else {
+    return null;
+  }
+}
+
+
   static Future<String?> getEmailByUsername(String username) async {
     final users = FirebaseFirestore.instance.collection('users');
     final querySnapshot =
