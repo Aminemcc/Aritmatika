@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '/services/LeaderboardService.dart';
 import '/services/UserService.dart';
 import '/pages/ProfilePageDetail.dart';
+import '/pages/TimedHistoryPage.dart';
 
 class LeaderboardPage extends StatefulWidget {
   const LeaderboardPage({super.key});
@@ -33,9 +34,9 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
           IconButton(
             onPressed: () {}, 
             icon: const Icon(Icons.emoji_events_outlined)
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: leaderboardService.getHistoryStream('timer_20_29'),
         builder: (context, snapshot){
@@ -57,28 +58,26 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
               itemBuilder: (context, index) {
                 //get each doc
                 DocumentSnapshot document = leaderboardList[index];
-                String docID = document.id;
+                String docId = document.id;
 
                 //get note from each doc
                 Map<String, dynamic> data = 
                   document.data() as Map<String, dynamic>;
-                String username = data ['username'];
-                String time = data ['displayTime'];
+                String username = data['username'];
+                String time = data['displayTime'];
                 
                 //TODO change mode = change leaderboard?
 
-
                 return GestureDetector(
                   onTap: () async {
-                    var temp = 
-                      await UserService.getUserData(username); 
+                    var temp = await UserService.getUserData(username); 
                     // Handle the tap event
                     print('Tapped on item ${temp?.id}');
-                      Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfilePage(temp?.id),
-                    ));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(temp?.id),
+                      ));
                   },
                   child: ListTile(
                     leading: Text(
@@ -101,6 +100,20 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                     ),
                     
                     subtitle: Text("Best Record: $time"),
+                    // Add the trailing button
+                    trailing: IconButton(
+                      icon: Icon(Icons.arrow_forward),
+                      onPressed: () async {
+                        var temp = await UserService.getUserData(username);
+                        print('aaaaaa');
+                        // Handle the button press event
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TimedHistoryPage(mode: 'timer20-29', docId: docId),
+                          ));
+                      },
+                    ),
                     //TODO highlight user when top 100
 
                     //TODO show user even if not top 100
