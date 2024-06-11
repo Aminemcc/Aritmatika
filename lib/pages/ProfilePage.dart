@@ -1,11 +1,60 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:aritmatika/components/text_box.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+class MyTextBox extends StatelessWidget {
+  final String text;
+  final String sectionName;
+  final void Function()? onPressed;
+  const MyTextBox(
+      {super.key,
+        required this.text,
+        required this.sectionName,
+        required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.only(left: 15, bottom: 15),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // section name
+              Text(
+                sectionName,
+                style: TextStyle(color: Colors.grey[500]),
+              ),
+
+              // edit button
+              IconButton(
+                onPressed: onPressed,
+                icon: Icon(
+                  Icons.settings,
+                  color: Colors.grey[400],
+                ),
+              )
+            ],
+          ),
+
+          // text
+          Text(text),
+        ],
+      ),
+    );
+  }
+}
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -16,6 +65,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final currentUser = FirebaseAuth.instance.currentUser!;
+  File? _profileImage;
 
   @override
   void initState() {
@@ -26,6 +76,57 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _requestPermission() async {
     await Permission.storage.request();
     await Permission.camera.request();
+  }
+
+  Future<void> _pickProfileImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+      await _uploadProfileImage();
+    }
+  }
+
+  Future<void> _uploadProfileImage() async {
+    if (_profileImage == null) return;
+
+    try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('profile_images')
+          .child(currentUser.uid);
+      final uploadTask = await storageRef.putFile(_profileImage!);
+      final imageUrl = await uploadTask.ref.getDownloadURL();
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .update({'profileImageUrl': imageUrl});
+
+      print('Profile image uploaded successfully: $imageUrl');
+    } catch (e) {
+      print('Error uploading profile image: $e');
+      showErrorMessage('Failed to upload profile image');
+    }
+  }
+
+  Future<void> _deleteProfileImage() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .update({'profileImageUrl': FieldValue.delete()});
+
+      setState(() {
+        _profileImage = null;
+      });
+
+      print('Profile image deleted successfully');
+    } catch (e) {
+      print('Error deleting profile image: $e');
+      showErrorMessage('Failed to delete profile image');
+    }
   }
 
   Future<void> editField(String field) async {
@@ -289,19 +390,18 @@ class _ProfilePageState extends State<ProfilePage> {
         .collection('posts')
         .doc(postId);
 
-    final updates = <String, dynamic>{
-      'text': newText,
-      'timestamp': FieldValue.serverTimestamp(),
-    };
-
-    if (removeImage) {
-      updates['imageUrl'] = FieldValue.delete();
-    } else if (newImageUrl != null) {
-      updates['imageUrl'] = newImageUrl;
-    }
-
     try {
-      await postRef.update(updates);
+      if (removeImage) {
+        await postRef.update({
+          'text': newText,
+          'imageUrl': FieldValue.delete(),
+        });
+      } else {
+        await postRef.update({
+          'text': newText,
+          if (newImageUrl != null) 'imageUrl': newImageUrl,
+        });
+      }
       print('Post updated successfully');
     } catch (e) {
       print('Error updating post: $e');
@@ -331,11 +431,41 @@ class _ProfilePageState extends State<ProfilePage> {
           final userData = snapshot.data!.data() as Map<String, dynamic>;
           final username = userData['username'] ?? '';
           final bio = userData['bio'] ?? '';
+          final profileImageUrl = userData['profileImageUrl'] ?? '';
 
           return ListView(
             children: [
               SizedBox(height: 50),
-              Icon(Icons.person, size: 72),
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundImage: profileImageUrl.isNotEmpty
+                          ? NetworkImage(profileImageUrl)
+                          : null,
+                      child: profileImageUrl.isEmpty ? Icon(Icons.person, size: 50) : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: _pickProfileImage,
+                        child: CircleAvatar(
+                          radius: 15,
+                          backgroundColor: Colors.blue,
+                          child: Icon(Icons.add, color: Colors.white, size: 20),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (profileImageUrl.isNotEmpty)
+                TextButton(
+                  onPressed: _deleteProfileImage,
+                  child: Text('Remove Profile Image'),
+                ),
               SizedBox(height: 50),
               Text(
                 currentUser.email!,
@@ -386,7 +516,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       itemBuilder: (context, index) {
                         final post = posts[index];
                         final postData = post.data() as Map<String, dynamic>;
-                        return _buildPostItem(post.id, postData);
+                        return _buildPostItem(post.id, postData, username);
                       },
                     );
                   } else if (snapshot.hasError) {
@@ -402,20 +532,65 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildPostItem(String postId, Map<String, dynamic> postData) {
+  Widget _buildPostItem(String postId, Map<String, dynamic> postData, String username) {
+    final timestamp = postData['timestamp'] as Timestamp?;
+    final postTime = timestamp != null ? timestamp.toDate() : DateTime.now();
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.grey[200],
         borderRadius: BorderRadius.circular(8),
       ),
-      margin: EdgeInsets.only(top: 25, left: 25, right: 25),
-      padding: EdgeInsets.all(25),
+      padding: const EdgeInsets.only(left: 15, bottom: 15, top: 15, right: 15),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    username,
+                    style: TextStyle(color: Colors.grey[500]),
+                  ),
+                  Text(
+                    '${postTime.toLocal()}',
+                    style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                  ),
+                ],
+              ),
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    _editPost(postId, postData);
+                  } else if (value == 'delete') {
+                    _deletePost(postId);
+                  }
+                },
+                itemBuilder: (BuildContext context) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Text('Edit'),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Text('Hapus'),
+                  ),
+                ],
+                icon: Icon(
+                  Icons.settings,
+                  color: Colors.grey[400],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
           Text(
             postData['text'] ?? '',
-            style: TextStyle(color: Colors.grey[500]),
+            style: TextStyle(color: Colors.black),
           ),
           SizedBox(height: 10),
           if (postData['imageUrl'] != null)
@@ -432,19 +607,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: Icon(Icons.edit, color: Colors.blue),
-                onPressed: () => _editPost(postId, postData),
-              ),
-              IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: () => _deletePost(postId),
-              ),
-            ],
-          ),
         ],
       ),
     );
