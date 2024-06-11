@@ -18,7 +18,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blueAccent,
         elevation: 0,
         // leading:
         //   IconButton(
@@ -46,7 +46,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
               separatorBuilder: 
                 (context, index) => const Divider(
                   thickness: 1,
-                  color: Colors.green, 
+                  color: Colors.blueAccent,
                   indent: 10,
                   endIndent: 10,
                 ),
@@ -78,7 +78,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                   title: Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: Colors.green[300],
+                        backgroundColor: Colors.blueAccent[300],
                         child: Text(username[0].toUpperCase()), //foto profil placeholder?
                       ),
                       const SizedBox(width: 5),

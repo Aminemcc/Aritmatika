@@ -40,7 +40,7 @@ class MyDrawer extends StatelessWidget {
               ),
 
               MyListTile(
-                icon: Icons.person,
+                icon: Icons.leaderboard,
                 text: 'L E A D E R B O A R D',
                 onTap: onLeaderboardTap,
               ),

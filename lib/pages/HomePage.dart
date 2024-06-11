@@ -198,20 +198,20 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0),
-                ElevatedButton(
-                  onPressed: () {
-                    signout();
-                  },
-                  child: Text(
-                    'Logout',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent,
-                    ),
-                  ),
-                ),
+                // SizedBox(height: 20.0),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     signout();
+                //   },
+                //   child: Text(
+                //     'Logout',
+                //     style: TextStyle(
+                //       fontSize: 15,
+                //       fontWeight: FontWeight.bold,
+                //       color: Colors.blueAccent,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
