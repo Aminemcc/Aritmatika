@@ -6,6 +6,9 @@ import 'package:aritmatika/pages/BitwiseSettingPage.dart';
 import 'package:aritmatika/pages/RandomSettingPage.dart';
 import 'package:aritmatika/pages/SolverPage.dart';
 import 'package:aritmatika/pages/TimedHomePage.dart';
+import 'package:aritmatika/pages/ProfilePage.dart';
+
+import '../components/drawer.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -34,6 +37,20 @@ class _HomePageState extends State<HomePage> {
     print("yey");
   }
 
+  // set up drawer
+
+  void goToProfilePage() {
+    // pop menu drawer
+    Navigator.pop(context);
+
+    // go to profile page
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProfilePage(),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +69,10 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
+      ),
+      drawer: MyDrawer(
+        onProfileTap: goToProfilePage,
+        onSignOut: signout,
       ),
       body: Stack(
         fit: StackFit.expand,

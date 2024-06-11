@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:aritmatika/components/my_button.dart';
@@ -49,7 +50,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-
   // sign user up method
   void signUserUp() async {
     // show loading circle
@@ -76,7 +76,8 @@ class _RegisterPageState extends State<RegisterPage> {
       }
 
       // Check if username is available
-      bool isAvailable = await UserService.usernameAvailable(usernameController.text);
+      bool isAvailable =
+      await UserService.usernameAvailable(usernameController.text);
       if (!isAvailable) {
         // Close loading circle
         if (Navigator.canPop(context)) {
@@ -93,9 +94,9 @@ class _RegisterPageState extends State<RegisterPage> {
         email: emailController.text,
         password: passwordController.text,
       );
-      final userService = UserService();
+
       // Add user details to Firestore
-      await userService.addUser(usernameController.text);
+      await UserService().addUser(usernameController.text);
 
       // Close loading circle on successful register
       if (Navigator.canPop(context)) {
@@ -113,7 +114,6 @@ class _RegisterPageState extends State<RegisterPage> {
       showErrorMessage(errorMessage);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

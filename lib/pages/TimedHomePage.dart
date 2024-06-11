@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:aritmatika/utils/Generator.dart';
@@ -7,8 +6,6 @@ import 'package:aritmatika/utils/SolverUtility.dart';
 import 'package:aritmatika/services/HistoryService.dart';
 import 'package:aritmatika/services/UserService.dart';
 import 'package:aritmatika/services/LeaderboardService.dart';
-import 'package:aritmatika/services/SettingService.dart';
-import 'package:aritmatika/pages/TimedAttemptsPage.dart';
 import 'package:aritmatika/pages/historyPage.dart';
 
 
@@ -264,239 +261,207 @@ class _TimedHomePageState extends State<TimedHomePage> {
       "timeTaken" : timeTaken,
       "displayTime" : StopWatchTimer.getDisplayTime(timeTaken, milliSecond: true)
     };
-    String docId = await historyService.addHistoryEntry("timer20-29", to_upload);
-    await historyService.addSubHistoryEntries("timer20-29", historyDatas, docId, "datas");
-
-
     Map<String, dynamic> to_upload_leaderboard = {
-      // "datas" : historyDatas,
-      "timeTaken" : timeTaken,
-      "displayTime" : StopWatchTimer.getDisplayTime(timeTaken, milliSecond: true),
+      "datas" : historyDatas,
+      "timeTaken" : val,
+      "displayTime" : StopWatchTimer.getDisplayTime(val, milliSecond: true),
       "username": username
     };
-    bool updateTime = false;
-    if(isCleared){
+    await historyService.addHistoryEntry("timer20-29", to_upload);
+    if(current_round == round + 1){
+      //check for best time
       int ?bestTime = await userService.getBestTimeTaken();
       if(bestTime == null || bestTime == -1){
         await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
-        await leaderboardService.addLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
-        updateTime = true;
       } else if(bestTime > to_upload["timeTaken"]){
         await userService.updateBestTime(to_upload["timeTaken"], to_upload["displayTime"]);
-        await leaderboardService.updateLeaderboardEntry("timer_20_29", user.uid, to_upload_leaderboard);
-        updateTime = true;
       }
-      if(updateTime){
-        await leaderboardService.addSubHistoryEntries("timer_20_29", historyDatas, user.uid, "datas");
-      }
+      await leaderboardService.insertToLeaderboard("timer20-29", to_upload_leaderboard);
     }
+  }
+
+  Widget buildTarget() {
+    return Column(
+      children: [
+        Text(
+          'Target',
+          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          '$target',
+          style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  Widget buildNumbers() {
+    return Column(
+      children: [
+        Text(
+          'Numbers',
+          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        Wrap(
+          children: numbers
+              .asMap()
+              .entries
+              .map((entry) => GestureDetector(
+            onTap: () => handleNumber(entry.key),
+            child: Container(
+              margin: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: isSelected[entry.key] ? Colors.blue : Colors.grey[300],
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                entry.value.toString(),
+                style: TextStyle(fontSize: 24.0),
+              ),
+            ),
+          ))
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget buildOperators() {
+    return Column(
+      children: [
+        Text(
+          'Operators',
+          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        Wrap(
+          children: operators
+              .map((operator) => GestureDetector(
+            onTap: () => applyOperator(operator),
+            child: Container(
+              margin: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                operator,
+                style: TextStyle(fontSize: 24.0),
+              ),
+            ),
+          ))
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget buildTimer() {
+    return Column(
+      children: [
+        Text(
+          'Timer',
+          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        StreamBuilder<int>(
+          stream: _stopWatchTimer.rawTime,
+          initialData: 0,
+          builder: (context, snapshot) {
+            final value = snapshot.data!;
+            final displayTime =
+            StopWatchTimer.getDisplayTime(value, milliSecond: true);
+            return Text(
+              displayTime,
+              style: TextStyle(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget buildBestTime() {
+    return Column(
+      children: [
+        Text(
+          'Best Time',
+          style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          bestDisplayTime,
+          style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold, color: Colors.green),
+        ),
+      ],
+    );
+  }
+
+  Widget buildTimerButton() {
+    String buttonText = '';
+    VoidCallback? onPressed;
+
+    switch (_currentState) {
+      case TimerState.start:
+        buttonText = 'Start';
+        onPressed = _startTimer;
+        break;
+      case TimerState.play:
+        buttonText = 'Stop';
+        onPressed = _stopAndShowTime;
+        break;
+      case TimerState.end:
+        buttonText = 'Reset';
+        onPressed = reset;
+        break;
+    }
+
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Text(buttonText),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-        _currentState == TimerState.play
-        ? 'Round $current_round / $round'
-        : 'Timed Home Page',),
-        actions: _currentState != TimerState.play ? <Widget>[
-          IconButton(
-            icon: Icon(Icons.history),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TimedAttemptsPage(mode: "timer20-29")),
-              );
-            },
-          ),
-        ] : null,
+        title: Text('Timed Mode'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 20),
-            StreamBuilder<int>(
-              stream: _stopWatchTimer.rawTime,
-              initialData: 0,
-              builder: (context, snapshot) {
-                final value = snapshot.data!;
-                String text_to_display = "", displayTime;
-                if(_currentState == TimerState.play) {
-                  displayTime = StopWatchTimer.getDisplayTime(
-                      value, milliSecond: true);
-                  text_to_display = displayTime;
-                } else if (_currentState == TimerState.start){
-                  displayTime = bestDisplayTime;
-                  text_to_display = "Best Time : $displayTime";
-                } else{
-                  displayTime = StopWatchTimer.getDisplayTime(
-                      value, milliSecond: true);
-                  text_to_display = "Time Taken : $displayTime";
-                }
-                return Text(text_to_display, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),);
-              },
-            ),
-            _buildContent(),
-            if (_currentState == TimerState.play)
-              PopScope(
-                canPop: false,
-                onPopInvoked: (bool didPop) async {
-                  if (didPop) {
-                    return;
-                  }
-                  await _handleBackPressed();
-                },
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await _handleBackPressed();
-                  },
-                  child: const Text('Stop'),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContent() {
-    switch (_currentState) {
-      case TimerState.start:
-        return _buildStartState();
-      case TimerState.play:
-        return _buildPlayState();
-      case TimerState.end:
-        return _buildEndState();
-      default:
-        return _buildStartState();
-    }
-  }
-
-  Widget _buildStartState() {
-    return ElevatedButton(
-      onPressed: _startTimer,
-      child: Text('Start'),
-    );
-  }
-
-  Widget _buildPlayState() {
-    int numNumberRows = (numbers.length / 5).ceil();
-
-    return Center(
+      body: WillPopScope(
+        onWillPop: () async {
+          _handleBackPressed();
+          return true;
+        },
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Target: ${target.toInt()}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              // Wrap numbers with SingleChildScrollView
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Wrap(
-                  direction: Axis.horizontal,
-                  children: List.generate(numNumberRows, (rowIndex) {
-                    int startIndex = rowIndex * 5;
-                    int endIndex = startIndex + 5 < numbers.length ? startIndex + 5 : numbers.length;
-                    return ToggleButtons(
-                      isSelected: isSelected.sublist(startIndex, endIndex),
-                      onPressed: (int index) {
-                        setState(() {
-                          handleNumber(index + startIndex);
-                        });
-                      },
-                      children: [
-                        for (int i = startIndex; i < endIndex; i++)
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10),
-                              color: isSelected[i] ? Colors.blue : null,
-                            ),
-                            child: Text(
-                              numbers[i] - numbers[i].toInt() == 0 ? numbers[i].toStringAsFixed(0) : numbers[i].toStringAsFixed(3),
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: isSelected[i] ? Colors.white : Colors.black,
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  }),
-                ),
-              ),
-              SizedBox(height: 20),
-              // Use Wrap widget to display operator buttons
-              Wrap(
-                alignment: WrapAlignment.spaceEvenly,
-                children: [
-                  for (String operator in operators)
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          currentOperator = operator;
-                        });
-                      },
-                      child: Text(operator, style: TextStyle(fontSize: 20)),
-                      style: ButtonStyle(
-                        backgroundColor: currentOperator == operator
-                            ? MaterialStateProperty.all(Colors.blue)
-                            : null,
-                      ),
-                    ),
-                ],
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  await applyOperator(currentOperator);
-                },
-                child: Text('Apply Operator'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: undo,
-                child: Text('Undo'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: reset,
-                child: Text('Reset'),
-              ),
+              buildTarget(),
+              SizedBox(height: 20.0),
+              buildNumbers(),
+              SizedBox(height: 20.0),
+              buildOperators(),
+              SizedBox(height: 20.0),
+              buildTimer(),
+              SizedBox(height: 20.0),
+              buildBestTime(),
+              SizedBox(height: 20.0),
+              buildTimerButton(),
             ],
           ),
         ),
-      );
-  }
-
-  Widget _buildEndState() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            setState(() {
-              _initState();
-            });
-          },
-          child: Text('Restart'),
-        ),
-      ],
+      ),
     );
   }
 
   @override
-  void dispose() {
-    _stopWatchTimer.dispose();
+  void dispose() async {
     super.dispose();
+    _stopWatchTimer.dispose();
   }
 }
+
