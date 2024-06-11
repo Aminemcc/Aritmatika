@@ -34,15 +34,6 @@ class UserService {
       return null; // Username not found
     }
   }
-  Future<String?> getUsernameByUid() async {
-    try {
-      final userData = await users.doc(user.uid).get();
-      return userData['username'] as String?;
-    } catch (e) {
-      print("Error getting username: $e");
-      return null;
-    }
-  }
 
   Future<String?> getUsernameByUid() async {
     try {
